@@ -1,10 +1,19 @@
 <div class="container">
-  <div class="left-section">
-    <!-- Contenido de la sección izquierda -->
-    <p>Sección izquierda</p>
+  <!-- Sección izquierda -->
+  <div class="estadisticas-container">
+    <div class="encabezado">
+      <h1>{{ currentMonth }}</h1> <!-- Muestra el mes actual -->
+    </div>
+    <div class="grafico">
+      <canvas #pieChart></canvas> <!-- Canvas para el gráfico -->
+    </div>
+    <div class="resumen">
+      <p><strong>Ingresos:</strong> ${{ ingresos }}</p>
+      <p><strong>Gastos:</strong> ${{ gastos }}</p>
+      <p><strong>Ahorros:</strong> ${{ ahorros }}</p>
+    </div>
   </div>
-  <div class="right-section">
-    <!-- Contenido de la sección derecha -->
-    <p>Sección derecha</p>
-  </div>
+
+  <!-- Sección derecha -->
+  <app-transacciones></app-transacciones> <!-- Nuevo componente -->
 </div>
