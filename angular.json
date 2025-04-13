@@ -20,7 +20,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/angular-control-flow-syntax",
-            "index": "src/PaginaPrincipal/index.html",
+            "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -34,7 +34,7 @@
               }
             ],
             "styles": [
-              "src/paginaPrincipal/stylesPrincipal.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           },

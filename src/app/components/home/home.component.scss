@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  height: 100%; 
+  width: 100%; // Asegúrate de que ocupe todo el ancho
+}
+
+.left-section {
+  flex: 0.7; // Ocupa el 50% del ancho
+  background-color: gray; // Fondo gris
+  color: white; // Texto blanco para contraste
+  display: flex;
+  justify-content: center;
+  align-items: center; // Centrar contenido
+}
+
+.right-section {
+  flex: 0.3; // Ocupa el 50% del ancho
+  background-color: black; // Fondo negro
+  color: white; // Texto blanco para contraste
+  display: flex;
+  justify-content: center;
+  align-items: center; // Centrar contenido
+}

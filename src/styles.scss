@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%; // Asegúrate de que html y body ocupen toda la altura
+  width: 100%; // Asegúrate de que html y body ocupen todo el ancho
+}
+
+app-root {
+  height: 100%; // Asegúrate de que el componente raíz ocupe toda la pantalla
+  width: 100%;
+}
