@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -8,8 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { LayoutComponent } from '../layout/layout.component';
 import { MovimientoService } from '../../services/movimiento.service';
 import { Movimiento } from '../../modelos/movimiento.model';
@@ -30,15 +31,22 @@ import { Movimiento } from '../../modelos/movimiento.model';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
+    ToastrModule,
     LayoutComponent,
   ],
   templateUrl: './movimientos.component.html',
   styleUrls: ['./movimientos.component.scss'],
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'es-ES' }],
 })
 export class MovimientosComponent implements OnInit {
   movimientos: Movimiento[] = [];
   filtroForm: FormGroup;
+  nuevoMovimientoForm: FormGroup;
   displayedColumns: string[] = ['id', 'tipo', 'cantidad', 'fecha', 'acciones'];
+  
+  // Estados
+  mostrandoFormulario: boolean = false;
+  cargandoMovimiento: boolean = false;
   
   // Estadísticas
   totalIngresos: number = 0;
@@ -47,12 +55,19 @@ export class MovimientosComponent implements OnInit {
 
   constructor(
     private movimientoService: MovimientoService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
   ) {
     this.filtroForm = this.fb.group({
       mes: [new Date().getMonth() + 1],
       anio: [new Date().getFullYear()],
       dia: [''],
+    });
+
+    this.nuevoMovimientoForm = this.fb.group({
+      tipo: ['ingreso', Validators.required],
+      cantidad: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      fecha: [new Date(), Validators.required],
     });
   }
 
@@ -68,6 +83,7 @@ export class MovimientosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar movimientos:', error);
+        this.toastr.error('Error al cargar los movimientos', 'Error');
       },
     });
   }
@@ -108,22 +124,61 @@ export class MovimientosComponent implements OnInit {
     if (confirm('¿Está seguro que desea eliminar este movimiento?')) {
       this.movimientoService.deleteMovimiento(id).subscribe({
         next: () => {
+          this.toastr.success('Movimiento eliminado correctamente', 'Éxito');
           this.cargarMovimientos();
         },
         error: (error) => {
           console.error('Error al eliminar movimiento:', error);
+          this.toastr.error('Error al eliminar el movimiento', 'Error');
         },
       });
     }
   }
 
-  editarMovimiento(movimiento: Movimiento): void {
-    // TODO: Implementar diálogo de edición
-    console.log('Editar:', movimiento);
+  agregarMovimiento(): void {
+    this.mostrandoFormulario = true;
+    this.nuevoMovimientoForm.reset({
+      tipo: 'ingreso',
+      cantidad: '',
+      fecha: new Date(),
+    });
   }
 
-  agregarMovimiento(): void {
-    // TODO: Implementar diálogo para agregar
-    console.log('Agregar nuevo movimiento');
+  cancelarMovimiento(): void {
+    this.mostrandoFormulario = false;
   }
-}
+
+  guardarMovimiento(): void {
+    if (this.nuevoMovimientoForm.invalid) {
+      this.toastr.warning('Por favor completa todos los campos correctamente', 'Validación');
+      return;
+    }
+
+    this.cargandoMovimiento = true;
+
+    const formValue = this.nuevoMovimientoForm.value;
+    const fecha = new Date(formValue.fecha);
+    
+    // Convertir fecha a formato ISO (localDate YYYY-MM-DD)
+    const fechaISO = fecha.toISOString().split('T')[0];
+
+    const nuevoMovimiento = {
+      tipo: formValue.tipo,
+      cantidad: parseFloat(formValue.cantidad),
+      fecha: fechaISO,
+    };
+
+    this.movimientoService.newMovimiento(nuevoMovimiento).subscribe({
+      next: () => {
+        this.toastr.success('Movimiento guardado correctamente', 'Éxito');
+        this.mostrandoFormulario = false;
+        this.cargarMovimientos();
+        this.cargandoMovimiento = false;
+      },
+      error: (error) => {
+        console.error('Error al crear movimiento:', error);
+        this.toastr.error('Error al guardar el movimiento. Intenta nuevamente', 'Error');
+        this.cargandoMovimiento = false;
+      },
+    });
+  }}
