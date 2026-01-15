@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TransaccionesService {
-  private apiUrl = 'http://localhost:8080/api/transacciones'; // URL base del backend para transacciones
+  private apiUrl = 'http://localhost:8080/finanzas/transacciones'; // URL base del backend para transacciones
 
   constructor(private http: HttpClient) {}
 

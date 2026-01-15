@@ -1,19 +1,23 @@
-import { Routes, provideRouter } from '@angular/router';
+import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
+import { MovimientosComponent } from './components/movimientos/movimientos.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home', // Redirige la raíz a /home
-    pathMatch: 'full',  // Asegúrate de usar pathMatch: 'full'
+    redirectTo: 'home',
+    pathMatch: 'full',
   },
   {
     path: 'home',
-    component: HomeComponent, // Carga el HomeComponent para la ruta /home
+    component: HomeComponent,
+  },
+  {
+    path: 'movimientos',
+    component: MovimientosComponent,
   },
   {
     path: '**',
-    redirectTo: 'home', // Redirige cualquier ruta no encontrada a /home
+    redirectTo: 'home',
   },
 ];
-export const appRouter = provideRouter(routes);

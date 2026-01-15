@@ -1,0 +1,17 @@
+<mat-sidenav-container class="contenedor-principal" autosize>
+  <mat-sidenav 
+    #sidenav
+    mode="side" 
+    opened 
+    class="contenedor-sidenav"
+    [ngClass]="{'minimizado': sidenavMinimizado}">
+    <app-sidebar 
+      [minimizado]="sidenavMinimizado"
+      (minimizadoChange)="onSidebarMinimizadoChange($event)"
+      (temaChange)="onTemaChange($event)"></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="contenedor-pagina">
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

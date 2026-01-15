@@ -1,0 +1,19 @@
+/* Estilos del layout */
+::ng-deep {
+  .mat-mdc-sidenav {
+    border-radius: 0 !important;
+  }
+
+  .mat-drawer {
+    border-radius: 0 !important;
+  }
+
+  /* Fondo del sidenav en tema claro */
+  .mat-drawer-container {
+    background-color: #f8f8f8;
+  }
+
+  html.dark-theme .mat-drawer-container {
+    background-color: #2a2a2a;
+  }
+}

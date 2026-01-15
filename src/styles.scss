@@ -1,14 +1,182 @@
-/* You can add global styles to this file, and also import other style files */
 
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+/* Global Styles */
 html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%; // Asegúrate de que html y body ocupen toda la altura
-  width: 100%; // Asegúrate de que html y body ocupen todo el ancho
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 app-root {
-  height: 100%; // Asegúrate de que el componente raíz ocupe toda la pantalla
+  height: 100%;
   width: 100%;
+  display: flex;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Layout Container Styles */
+.contenedor-principal {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.contenedor-sidenav {
+  width: 250px;
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+  background-color: #f8f8f8;
+  border-right: 1px solid #e8e8e8;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+  &.minimizado {
+    width: 80px;
+
+    .menu-text {
+      display: none;
+    }
+
+    .menu-item {
+      justify-content: center;
+    }
+
+    .toggle-label {
+      display: none;
+    }
+  }
+}
+
+
+.contenedor-pagina {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  background-color: #f5f5f5;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease;
+}
+
+/* Dark Theme */
+html.dark-theme {
+  .contenedor-sidenav {
+    background-color: #2a2a2a;
+    border-right-color: #3a3a3a;
+
+    .sidenav-header {
+      border-bottom-color: #3a3a3a;
+      color: #fff;
+
+      button {
+        color: #fff;
+      }
+    }
+
+    .sidenav-menu {
+      &::-webkit-scrollbar-thumb {
+        background: #555;
+
+        &:hover {
+          background: #777;
+        }
+      }
+    }
+
+    .menu-item {
+      color: #e0e0e0;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+    }
+
+    .sidenav-footer {
+      border-top-color: #3a3a3a;
+      color: #e0e0e0;
+
+      button {
+        color: #e0e0e0;
+      }
+    }
+  }
+
+  .contenedor-pagina {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .contenedor-principal {
+    flex-direction: column;
+  }
+
+  .contenedor-sidenav {
+    width: 100%;
+    height: auto;
+    max-height: 60px;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+
+    &.minimizado {
+      width: 100%;
+      height: auto;
+    }
+
+    .sidenav-menu {
+      flex-direction: row;
+      overflow-x: auto;
+    }
+
+    .menu-item {
+      flex: 0 0 auto;
+      height: 56px;
+      min-width: 56px;
+      justify-content: center;
+
+      .menu-text {
+        display: none !important;
+      }
+    }
+  }
+
+  .contenedor-pagina {
+    flex: 1;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor-pagina {
+    padding: 12px;
+  }
 }

@@ -1,0 +1,140 @@
+<app-layout>
+  <div class="movimientos-container">
+    <!-- Título -->
+    <div class="header">
+      <h1>Movimientos</h1>
+      <button mat-raised-button color="primary" (click)="agregarMovimiento()">
+        <mat-icon>add</mat-icon>
+        Nuevo Movimiento
+      </button>
+    </div>
+
+    <!-- Filtros -->
+    <mat-card class="filtro-card">
+      <mat-card-content>
+        <form [formGroup]="filtroForm" class="filtro-form">
+          <mat-form-field appearance="fill">
+            <mat-label>Mes</mat-label>
+            <mat-select formControlName="mes" (change)="onFiltroChange()">
+              <mat-option *ngFor="let m of [1,2,3,4,5,6,7,8,9,10,11,12]" [value]="m">
+                {{ m }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Año</mat-label>
+            <mat-select formControlName="anio" (change)="onFiltroChange()">
+              <mat-option *ngFor="let a of [2023, 2024, 2025, 2026]" [value]="a">
+                {{ a }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Día (opcional)</mat-label>
+            <input 
+              matInput 
+              type="number" 
+              formControlName="dia"
+              min="1"
+              max="31"
+              (change)="onFiltroChange()">
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Estadísticas -->
+    <div class="estadisticas">
+      <mat-card class="stat-card ingresos">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>arrow_upward</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Ingresos</p>
+            <p class="stat-value">${{ totalIngresos | number: '1.2-2' }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card egresos">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>arrow_downward</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Egresos</p>
+            <p class="stat-value">${{ totalEgresos | number: '1.2-2' }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card balance">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Balance</p>
+            <p class="stat-value">{{ balance | number: '1.2-2' }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Tabla de Movimientos -->
+    <mat-card class="tabla-card">
+      <mat-card-content>
+        <table mat-table [dataSource]="aplicarFiltros()" class="movimientos-table">
+          <!-- Columna ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+          </ng-container>
+
+          <!-- Columna Tipo -->
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let element">
+              <span [ngClass]="'badge-' + element.tipo">
+                {{ element.tipo | uppercase }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Columna Cantidad -->
+          <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.cantidad | currency }}
+            </td>
+          </ng-container>
+
+          <!-- Columna Fecha -->
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+            <td mat-cell *matCellDef="let element">{{ element.fecha }}</td>
+          </ng-container>
+
+          <!-- Columna Acciones -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button color="primary" (click)="editarMovimiento(element)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="eliminarMovimiento(element.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</app-layout>
