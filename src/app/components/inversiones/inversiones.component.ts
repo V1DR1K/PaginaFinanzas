@@ -24,6 +24,13 @@ interface TokenRow {
   ts?: number;
 }
 
+interface TokenHolding {
+  instId: string;
+  symbol: string;
+  amount: number;
+  percentage: number;
+}
+
 @Component({
   selector: 'app-inversiones',
   standalone: true,
@@ -49,6 +56,20 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
     { instId: 'ADAUSDT', display: 'ADA / USDT' },
     { instId: 'HBARUSDT', display: 'HBAR / USDT' },
     { instId: 'BTCEUR', display: 'BTC / EUR' },
+  ];
+
+  // Tenencias actuales hardcodeadas
+  readonly holdings: TokenHolding[] = [
+    { instId: 'ETHUSDT', symbol: 'ETH', amount: 0.4889803, percentage: 43.10 },
+    { instId: 'SOLUSDT', symbol: 'SOL', amount: 5.51308848, percentage: 21.16 },
+    { instId: 'PEPEUSDT', symbol: 'PEPE', amount: 66392802.517, percentage: 10.35 },
+    { instId: 'BGBUSDT', symbol: 'BGB', amount: 86.8479651, percentage: 8.74 },
+    { instId: 'AVAXUSDT', symbol: 'AVAX', amount: 15.7641201, percentage: 5.79 },
+    { instId: 'FILUSDT', symbol: 'FIL', amount: 108.2227, percentage: 4.47 },
+    { instId: 'ADAUSDT', symbol: 'ADA', amount: 329.751918, percentage: 3.49 },
+    { instId: 'BANANAUSDT', symbol: 'BANANA', amount: 7.63236, percentage: 1.49 },
+    { instId: 'RONINUSDT', symbol: 'RON', amount: 286.87335, percentage: 1.35 },
+    { instId: 'THETAUSDT', symbol: 'THETA', amount: 277.3742, percentage: 0 },
   ];
 
   rows: TokenRow[] = [];
@@ -187,5 +208,33 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get positiveTokens(): TokenRow[] {
     return this.rows.filter((r) => r.changePct === undefined || r.changePct >= 0);
+  }
+
+  get totalBalance(): number {
+    return this.holdings.reduce((total, holding) => {
+      const tokenRow = this.rows.find(r => r.instId === holding.instId);
+      if (tokenRow && tokenRow.last) {
+        // Para PEPE, el precio es por 1000 tokens
+        const price = holding.instId === 'PEPEUSDT' ? tokenRow.last / 1000 : tokenRow.last;
+        return total + (holding.amount * price);
+      }
+      return total;
+    }, 0);
+  }
+
+  getHoldingValue(instId: string): number {
+    const holding = this.holdings.find(h => h.instId === instId);
+    const tokenRow = this.rows.find(r => r.instId === instId);
+    
+    if (!holding || !tokenRow || !tokenRow.last) return 0;
+    
+    // Para PEPE, el precio es por 1000 tokens
+    const price = instId === 'PEPEUSDT' ? tokenRow.last / 1000 : tokenRow.last;
+    return holding.amount * price;
+  }
+
+  getHoldingAmount(instId: string): number {
+    const holding = this.holdings.find(h => h.instId === instId);
+    return holding?.amount || 0;
   }
 }

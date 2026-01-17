@@ -1,159 +1,290 @@
 @import '../../../assets/estilos/index';
 
 :host {
-  display: block;
+    display: block;
 }
 
 .inversiones-container {
-  @include main-container;
+    @include main-container;
 }
 
 .panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: $spacing-lg;
-  margin-bottom: $spacing-xl;
-  padding: 0 $spacing-md;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+    padding: 0 $spacing-md;
 
-  h1 {
-    @include main-title;
-  }
+    h1 {
+        @include main-title;
+    }
 
-  .subtitle {
-    @include subtitle;
-  }
+    .subtitle {
+        @include subtitle;
+    }
 
-  .eyebrow {
-    @include eyebrow;
-  }
+    .eyebrow {
+        @include eyebrow;
+    }
 }
 
 .status-group {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
 
-  mat-chip {
-    font-weight: 500;
+    mat-chip {
+        font-weight: 500;
+
+        :host-context(html.dark-theme) & {
+            color: white !important;
+
+            .chip-text {
+                color: white !important;
+            }
+
+            mat-icon {
+                color: white !important;
+            }
+        }
+
+        :host-context(:not(.dark-theme)) & {
+            .chip-text {
+                color: inherit;
+            }
+        }
+    }
+}
+
+.balance-section {
+    margin-bottom: $spacing-xl;
+    padding: 0 $spacing-md;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: $spacing-lg;
+
+    @media (max-width: 1200px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.balance-card {
+    @include glass-card;
+    display: flex;
+    flex-direction: column;
+
+    mat-card-content {
+        padding: $spacing-lg !important;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+.balance-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-evenly;
+}
+
+.balance-label {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    font-size: 24px;
+    font-weight: 600;
+    @include text-secondary;
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.balance-value {
+    display: flex;
+    justify-content: end;
+    font-size: 68px;
+    font-weight: 700;
+    font-family: $font-mono;
+    color: $success-color;
+}
+
+.holdings-card {
+    @include glass-card;
+
+    mat-card-content {
+        padding: $spacing-lg !important;
+    }
+}
+
+.holdings-title {
+    margin: 0 0 $spacing-md 0;
+    font-size: 14px;
+    font-weight: 600;
+    @include text-secondary;
+}
+
+.holdings-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: $spacing-sm;
+    max-height: 200px;
+    overflow-y: auto;
+    @include hide-scrollbar;
+}
+
+.holding-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: $spacing-sm;
+    border-radius: $radius-sm;
+    transition: background-color 0.2s ease;
 
     :host-context(html.dark-theme) & {
-      color: white !important;
+        background-color: rgba(255, 255, 255, 0.03);
 
-      .chip-text {
-        color: white !important;
-      }
-
-      mat-icon {
-        color: white !important;
-      }
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+        }
     }
 
     :host-context(:not(.dark-theme)) & {
-      .chip-text {
-        color: inherit;
-      }
+        background-color: rgba(15, 23, 42, 0.02);
+
+        &:hover {
+            background-color: rgba(15, 23, 42, 0.04);
+        }
     }
-  }
+}
+
+.holding-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.holding-symbol {
+    font-weight: 700;
+    font-size: 12px;
+    @include text-primary;
+}
+
+.holding-amount {
+    font-size: 10px;
+    font-family: $font-mono;
+    @include text-secondary;
+}
+
+.holding-value {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: $font-mono;
+    color: $success-color;
 }
 
 .tokens-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-3xl;
-  align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3xl;
+    align-items: stretch;
 }
 
 .tokens-section {
-  width: 100%;
-  overflow: hidden;
+    width: 100%;
+    overflow: hidden;
 }
 
 .section-title {
-  @include section-title;
+    @include section-title;
 }
 
 .cards-grid {
-  display: flex;
-  gap: $spacing-lg;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: $spacing-sm $spacing-xs $spacing-lg $spacing-xs;
-  @include hide-scrollbar;
+    display: flex;
+    gap: $spacing-lg;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: $spacing-sm $spacing-xs $spacing-lg $spacing-xs;
+    @include hide-scrollbar;
 }
 
 .token-card {
-  min-width: 280px;
-  max-width: 280px;
-  flex-shrink: 0;
-  @include glass-card;
-  padding: $spacing-lg;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
+    min-width: 280px;
+    max-width: 280px;
+    flex-shrink: 0;
+    @include glass-card;
+    padding: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
 }
 
 .token-header {
-  display: flex;
-  gap: $spacing-md;
-  align-items: center;
+    display: flex;
+    gap: $spacing-md;
+    align-items: center;
 }
 
 .token-icon {
-  @include token-icon;
+    @include token-icon;
 }
 
 .token-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .token-name {
-  font-weight: 700;
-  font-size: 16px;
+    font-weight: 700;
+    font-size: 16px;
 }
 
 .token-id {
-  font-size: 12px;
-  opacity: 0.8;
+    font-size: 12px;
+    opacity: 0.8;
 }
 
 .token-body {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .price {
-  font-size: 20px;
-  font-weight: 700;
-  font-family: $font-mono;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: $font-mono;
 }
 
 .change {
-  @include badge;
+    @include badge;
 
-  &.up {
-    color: $success-color;
-  }
+    &.up {
+        color: $success-color;
+    }
 
-  &.down {
-    color: $error-color;
-  }
+    &.down {
+        color: $error-color;
+    }
 }
 
 @include desktop {
-  .panel-header {
-    flex-direction: column;
-  }
+    .panel-header {
+        flex-direction: column;
+    }
 
-  .status-group {
-    flex-wrap: wrap;
-  }
+    .status-group {
+        flex-wrap: wrap;
+    }
 
-  .token-card {
-    min-width: 240px;
-    max-width: 240px;
-  }
+    .token-card {
+        min-width: 240px;
+        max-width: 240px;
+    }
 }

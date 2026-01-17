@@ -24,6 +24,41 @@
       </div>
     </div>
 
+    <!-- Balance Total -->
+    <div class="balance-section">
+      <mat-card class="balance-card">
+        <mat-card-content>
+          <div class="balance-content">
+            <div class="balance-label">
+              <mat-icon>account_balance_wallet</mat-icon>
+              <span>Balance Total</span>
+            </div>
+            <div class="balance-value">
+              ${{ formatNumber(totalBalance, 2) }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Holdings List -->
+      <mat-card class="holdings-card">
+        <mat-card-content>
+          <h3 class="holdings-title">Tenencias</h3>
+          <div class="holdings-list">
+            <div class="holding-item" *ngFor="let holding of holdings">
+              <div class="holding-info">
+                <div class="holding-symbol">{{ holding.symbol }}</div>
+                <div class="holding-amount">{{ formatNumber(holding.amount, 4) }}</div>
+              </div>
+              <div class="holding-value">
+                ${{ formatNumber(getHoldingValue(holding.instId), 2) }}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
     <div class="tokens-wrapper">
       <div class="tokens-section negative-section">
         <h3 class="section-title">En Baja</h3>
