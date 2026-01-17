@@ -42,8 +42,8 @@ body {
   width: 100%;
   display: flex;
   flex-direction: row;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(500px);
+  -webkit-backdrop-filter: blur(500px);
   transition: all 0.5s ease-in-out;
 
   :host-context(html.dark-theme) &,
@@ -68,7 +68,7 @@ body {
 
   :host-context(html.dark-theme) &,
   html.dark-theme & {
-    background-color: rgba($dark-card-bg, 0.6) !important;
+    background: $dark-bg-gradient;
     border-right: 1px solid $dark-border;
   }
 
@@ -404,6 +404,86 @@ html:not(.dark-theme) {
     transition: background 0.5s ease-in-out;
 
   }
+
+  /* Button Styles - Light Theme */
+  button.mat-mdc-button,
+  button.mat-mdc-raised-button:not(.mat-primary),
+  button.mat-mdc-flat-button:not(.mat-primary),
+  button.mat-mdc-stroked-button {
+    color: $light-text-primary !important;
+    transition: all 0.3s ease !important;
+
+    .mdc-button__label {
+      color: $light-text-primary !important;
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: $light-text-primary !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: rgba($light-accent, 0.1) !important;
+      color: $light-accent !important;
+
+      .span.mdc-button__label {
+        color: $light-accent !important;
+      }
+    }
+  }
+
+  button.mat-mdc-raised-button:not(.mat-primary),
+  button.mat-mdc-unelevated-button:not(.mat-primary) {
+    background-color: rgba($light-accent, 0.15) !important;
+    color: $light-text-primary !important;
+
+    .mdc-button__label {
+      color: $light-text-primary !important;
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: $light-text-primary !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: rgba($light-accent, 0.25) !important;
+      box-shadow: 0 4px 12px rgba($light-accent, 0.2) !important;
+    }
+  }
+
+  .mat-mdc-raised-button.mat-primary,
+  .mat-mdc-unelevated-button.mat-primary {
+    background-color: $light-accent !important;
+    color: white !important;
+
+    .span.mdc-button__label {
+      color: white !important;
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: white !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: darken($light-accent, 10%) !important;
+      box-shadow: 0 4px 12px rgba($light-accent, 0.3) !important;
+    }
+  }
+
+  .mat-mdc-icon-button {
+    color: $light-text-primary !important;
+
+    mat-icon,
+    .mat-icon {
+      color: $light-text-primary !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: rgba($light-accent, 0.1) !important;
+    }
+  }
 }
 
 html.dark-theme {
@@ -416,6 +496,98 @@ html.dark-theme {
     -webkit-backdrop-filter: blur(10px);
     border-right: 1px solid $dark-border !important;
     transition: background 0.5s ease-in-out;
+  }
 
+  /* Button Styles - Dark Theme */
+  button.mat-mdc-button,
+  button.mat-mdc-raised-button:not(.mat-primary),
+  button.mat-mdc-flat-button:not(.mat-primary),
+  button.mat-mdc-stroked-button {
+    color: $dark-text-primary !important;
+    transition: all 0.3s ease !important;
+
+    .mdc-button__label {
+      color: $dark-text-primary !important;
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: $dark-text-primary !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: rgba($dark-accent, 0.15) !important;
+      color: $dark-accent !important;
+
+      .mdc-button__label {
+        color: $dark-accent !important;
+      }
+    }
+  }
+
+  button.mat-mdc-raised-button:not(.mat-primary),
+  button.mat-mdc-unelevated-button:not(.mat-primary) {
+    background-color: rgba($dark-accent, 0.2) !important;
+    color: $dark-text-primary !important;
+
+    .mdc-button__label {
+      color: $dark-text-primary !important;
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: $dark-text-primary !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: rgba($dark-accent, 0.3) !important;
+      box-shadow: 0 4px 12px rgba($dark-accent, 0.2) !important;
+    }
+  }
+
+  .mat-mdc-raised-button.mat-primary,
+  .mat-mdc-unelevated-button.mat-primary {
+    background-color: $dark-accent !important;
+    color: white !important;
+
+    .mdc-button__label {
+      color: white !important;
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: white !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: lighten($dark-accent, 10%) !important;
+      box-shadow: 0 4px 12px rgba($dark-accent, 0.4) !important;
+    }
+  }
+
+  .mat-mdc-icon-button {
+    color: $dark-text-primary !important;
+
+    mat-icon,
+    .mat-icon {
+      color: $dark-text-primary !important;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: rgba($dark-accent, 0.15) !important;
+    }
+  }
+
+  /* Chips */
+  .mat-mdc-chip {
+    color: white !important;
+
+    mat-icon {
+      color: white !important;
+    }
+
+    .mdc-evolution-chip__text-label {
+      color: white !important;
+    }
   }
 }
