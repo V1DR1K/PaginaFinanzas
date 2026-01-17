@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   @Input() minimizado: boolean = false;
   @Output() minimizadoChange = new EventEmitter<boolean>();
   @Output() temaChange = new EventEmitter<'light' | 'dark'>();
@@ -21,8 +21,14 @@ export class SidebarComponent {
   menuItems = [
     { icon: 'home', label: 'Inicio', route: '/home' },
     { icon: 'paid', label: 'Movimientos', route: '/movimientos' },
+    { icon: 'trending_up', label: 'Inversiones', route: '/inversiones' },
     { icon: 'savings', label: 'Ahorros', route: '/ahorros' },
   ];
+
+  ngOnInit(): void {
+    const temaGuardado = localStorage.getItem('theme') || 'light';
+    this.temaOscuro = temaGuardado === 'dark';
+  }
 
   toggleMinimizado() {
     this.minimizado = !this.minimizado;
