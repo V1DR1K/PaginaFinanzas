@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -31,7 +31,10 @@ interface TokenRow {
   templateUrl: './inversiones.component.html',
   styleUrls: ['./inversiones.component.scss'],
 })
-export class InversionesComponent implements OnInit, OnDestroy {
+export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('negativeCarousel') negativeCarousel?: ElementRef<HTMLDivElement>;
+  @ViewChild('positiveCarousel') positiveCarousel?: ElementRef<HTMLDivElement>;
+
   readonly tokens: TokenRow[] = [
     { instId: 'BTCUSDT', display: 'BTC / USDT' },
     { instId: 'ETHUSDT', display: 'ETH / USDT' },
@@ -56,6 +59,8 @@ export class InversionesComponent implements OnInit, OnDestroy {
   private statusSub?: Subscription;
   private binanceTickerSub?: Subscription;
   private binanceStatusSub?: Subscription;
+  private negativeScrollInterval?: any;
+  private positiveScrollInterval?: any;
 
   displayedColumns = ['pair', 'last', 'changePct', 'bidAsk', 'range', 'time'];
 
@@ -85,6 +90,13 @@ export class InversionesComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit(): void {
+    // Iniciar auto-scroll después de que la vista esté lista
+    setTimeout(() => {
+      this.startAutoScroll();
+    }, 1000);
+  }
+
   ngOnDestroy(): void {
     this.tickerSub?.unsubscribe();
     this.statusSub?.unsubscribe();
@@ -92,6 +104,44 @@ export class InversionesComponent implements OnInit, OnDestroy {
     this.binanceTickerSub?.unsubscribe();
     this.binanceStatusSub?.unsubscribe();
     this.binanceWs.disconnect();
+    this.stopAutoScroll();
+  }
+
+  startAutoScroll(): void {
+    this.negativeScrollInterval = setInterval(() => {
+      if (this.negativeCarousel) {
+        const container = this.negativeCarousel.nativeElement;
+        const scrollAmount = 296; // card width + gap
+        
+        if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
+          container.scrollLeft = 0;
+        } else {
+          container.scrollLeft += scrollAmount;
+        }
+      }
+    }, 3000);
+
+    this.positiveScrollInterval = setInterval(() => {
+      if (this.positiveCarousel) {
+        const container = this.positiveCarousel.nativeElement;
+        const scrollAmount = 296; // card width + gap
+        
+        if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
+          container.scrollLeft = 0;
+        } else {
+          container.scrollLeft += scrollAmount;
+        }
+      }
+    }, 3000);
+  }
+
+  stopAutoScroll(): void {
+    if (this.negativeScrollInterval) {
+      clearInterval(this.negativeScrollInterval);
+    }
+    if (this.positiveScrollInterval) {
+      clearInterval(this.positiveScrollInterval);
+    }
   }
 
   applyBitgetUpdate(update: BitgetTickerUpdate): void {
@@ -129,5 +179,13 @@ export class InversionesComponent implements OnInit, OnDestroy {
     if (!ts) return '-';
     const date = new Date(ts);
     return date.toLocaleTimeString();
+  }
+
+  get negativeTokens(): TokenRow[] {
+    return this.rows.filter((r) => r.changePct !== undefined && r.changePct < 0);
+  }
+
+  get positiveTokens(): TokenRow[] {
+    return this.rows.filter((r) => r.changePct === undefined || r.changePct >= 0);
   }
 }
