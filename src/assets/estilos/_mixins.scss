@@ -1,0 +1,172 @@
+@import './variables';
+
+// Mixin para aplicar estilos según el tema
+@mixin theme-aware($property, $dark-value, $light-value) {
+  :host-context(html.dark-theme) & {
+    #{$property}: $dark-value;
+  }
+  
+  :host-context(:not(.dark-theme)) & {
+    #{$property}: $light-value;
+  }
+}
+
+// Mixin para texto principal
+@mixin text-primary {
+  @include theme-aware(color, $dark-text-primary, $light-text-primary);
+}
+
+// Mixin para texto secundario
+@mixin text-secondary {
+  @include theme-aware(color, $dark-text-secondary, $light-text-secondary);
+}
+
+// Mixin para tarjetas glass
+@mixin glass-card {
+  border-radius: $radius-lg;
+  
+  :host-context(html.dark-theme) & {
+    background: $dark-card-bg;
+    border: 1px solid $dark-card-border;
+    box-shadow: $dark-card-shadow;
+    color: $dark-text-primary;
+  }
+  
+  :host-context(:not(.dark-theme)) & {
+    background: $light-card-bg;
+    border: 1px solid $light-card-border;
+    box-shadow: $light-card-shadow;
+    color: $light-text-primary;
+  }
+}
+
+// Mixin para container principal
+@mixin main-container {
+  padding: $spacing-2xl 0;
+  min-height: 100vh;
+  
+  :host-context(html.dark-theme) & {
+    background: $dark-bg-gradient;
+    color: $dark-text-primary;
+  }
+  
+  :host-context(:not(.dark-theme)) & {
+    background: $light-bg-gradient;
+    color: $light-text-primary;
+  }
+}
+
+// Mixin para títulos de sección
+@mixin section-title {
+  margin: 0 0 $spacing-lg 0;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0 $spacing-xs;
+  @include text-primary;
+}
+
+// Mixin para títulos principales
+@mixin main-title {
+  margin: $spacing-xs 0;
+  font-size: 32px;
+  font-weight: 700;
+  @include text-primary;
+}
+
+// Mixin para subtítulos
+@mixin subtitle {
+  margin: $spacing-xs 0 0 0;
+  @include text-secondary;
+}
+
+// Mixin para eyebrow text
+@mixin eyebrow {
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  
+  :host-context(html.dark-theme) & {
+    color: $dark-accent;
+  }
+  
+  :host-context(:not(.dark-theme)) & {
+    color: $light-accent;
+  }
+}
+
+// Mixin para iconos de tokens
+@mixin token-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #ffffff;
+  
+  :host-context(html.dark-theme) & {
+    background: $icon-gradient-dark;
+  }
+  
+  :host-context(:not(.dark-theme)) & {
+    background: $icon-gradient-light;
+  }
+}
+
+// Mixin para badges/pills
+@mixin badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: $radius-full;
+  font-weight: 600;
+  
+  :host-context(html.dark-theme) & {
+    background: $dark-overlay;
+  }
+  
+  :host-context(:not(.dark-theme)) & {
+    background: $light-overlay;
+  }
+}
+
+// Mixin para ocultar scrollbar
+@mixin hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Utilidades responsive
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (max-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media (min-width: $breakpoint-wide) {
+    @content;
+  }
+}

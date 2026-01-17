@@ -1,11 +1,20 @@
+@import '../../../assets/estilos/index';
+
 .sidenav-header {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 8px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: $spacing-sm;
   height: 56px;
   flex-shrink: 0;
+
+  :host-context(html.dark-theme) & {
+    border-bottom: 1px solid $dark-border;
+  }
+
+  :host-context(:not(.dark-theme)) & {
+    border-bottom: 1px solid $light-border;
+  }
 
   button {
     width: 40px;
@@ -14,48 +23,46 @@
 }
 
 .sidenav-menu {
-  padding: 8px 0;
+  padding: $spacing-sm 0;
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 3px;
-
-    &:hover {
-      background: #999;
-    }
-  }
+  @include hide-scrollbar;
 }
 
 .menu-item {
   width: 100%;
   justify-content: flex-start;
-  padding: 0 16px;
+  padding: 0 $spacing-lg;
   height: 48px;
   text-align: left;
   border-radius: 0;
-  color: #333;
   flex-shrink: 0;
+  transition: background-color 0.2s ease;
+
+  :host-context(html.dark-theme) & {
+    @include text-primary;
+  }
+
+  :host-context(:not(.dark-theme)) & {
+    @include text-primary;
+  }
 
   mat-icon {
-    margin-right: 16px;
+    margin-right: $spacing-lg;
     margin-left: 0;
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    :host-context(html.dark-theme) & {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    :host-context(:not(.dark-theme)) & {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
   }
 }
 
@@ -69,10 +76,17 @@
 .sidenav-footer {
   display: flex;
   align-items: center;
-  padding: 16px;
-  border-top: 1px solid #e0e0e0;
+  padding: $spacing-lg;
   flex-shrink: 0;
-  gap: 8px;
+  gap: $spacing-sm;
+
+  :host-context(html.dark-theme) & {
+    border-top: 1px solid $dark-border;
+  }
+
+  :host-context(:not(.dark-theme)) & {
+    border-top: 1px solid $light-border;
+  }
 
   .tema-button {
     flex-shrink: 0;
@@ -84,6 +98,7 @@
     font-size: 12px;
     white-space: nowrap;
     flex: 1;
+    @include text-secondary;
   }
 }
 

@@ -1,19 +1,17 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 @use 'ngx-toastr/toastr' as toastr;
+@import 'assets/estilos/index';
 
 html {
-  @include mat.theme((
-    color: (
-      theme-type: light,
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+  @include mat.theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
 }
 
 /* Global Styles */
@@ -30,6 +28,7 @@ app-root {
   height: 100%;
   width: 100%;
   display: flex;
+
 }
 
 body {
@@ -43,17 +42,41 @@ body {
   width: 100%;
   display: flex;
   flex-direction: row;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.5s ease-in-out;
+
+  :host-context(html.dark-theme) &,
+  html.dark-theme & {
+    background: $dark-bg-gradient;
+  }
+
+  :host-context(:not(.dark-theme)) &,
+  html:not(.dark-theme) & {
+    background: rgba($light-card-bg, 0.6);
+  }
 }
 
 .contenedor-sidenav {
   width: 250px;
   height: 100%;
-  transition: width 0.3s ease-in-out;
-  background-color: #f8f8f8;
-  border-right: 1px solid #e8e8e8;
+  transition: width background 0.5s ease-in-out;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
+
+  :host-context(html.dark-theme) &,
+  html.dark-theme & {
+    background-color: rgba($dark-card-bg, 0.6) !important;
+    border-right: 1px solid $dark-border;
+  }
+
+  :host-context(:not(.dark-theme)) &,
+  html:not(.dark-theme) & {
+    background: rgba($light-card-bg, 0.6);
+    border-right: 1px solid $light-border;
+  }
 
   &.minimizado {
     width: 80px;
@@ -78,58 +101,18 @@ body {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px;
-  background-color: #f5f5f5;
+  padding: $spacing-xl;
   box-sizing: border-box;
-  transition: background-color 0.3s ease;
-}
+  transition: background 0.5s ease-in-out;
 
-/* Dark Theme */
-html.dark-theme {
-  .contenedor-sidenav {
-    background-color: #2a2a2a;
-    border-right-color: #3a3a3a;
-
-    .sidenav-header {
-      border-bottom-color: #3a3a3a;
-      color: #fff;
-
-      button {
-        color: #fff;
-      }
-    }
-
-    .sidenav-menu {
-      &::-webkit-scrollbar-thumb {
-        background: #555;
-
-        &:hover {
-          background: #777;
-        }
-      }
-    }
-
-    .menu-item {
-      color: #e0e0e0;
-
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.08);
-      }
-    }
-
-    .sidenav-footer {
-      border-top-color: #3a3a3a;
-      color: #e0e0e0;
-
-      button {
-        color: #e0e0e0;
-      }
-    }
+  html.dark-theme & {
+    background: $dark-bg-gradient;
+    color: $dark-text-primary;
   }
 
-  .contenedor-pagina {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
+  html:not(.dark-theme) & {
+    background: $light-bg-gradient;
+    color: $light-text-primary;
   }
 }
 
@@ -178,6 +161,261 @@ html.dark-theme {
 
 @media (max-width: 480px) {
   .contenedor-pagina {
-    padding: 12px;
+    padding: $spacing-md;
+  }
+}
+
+/* Material Input Styles - Theme Aware */
+html.dark-theme {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: $dark-input-bg !important;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: $radius-sm;
+    }
+
+    .mat-mdc-form-field-focus-overlay {
+      background-color: transparent !important;
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+      background-color: $dark-input-bg !important;
+
+      .mdc-line-ripple::before {
+        border-bottom-color: $dark-input-border !important;
+      }
+
+      .mdc-line-ripple::after {
+        border-bottom-color: $dark-accent !important;
+      }
+    }
+
+    .mat-mdc-input-element {
+      color: $dark-text-primary !important;
+      caret-color: $dark-accent !important;
+    }
+
+    .mat-mdc-form-field-label,
+    .mat-mdc-floating-label {
+      color: $dark-text-secondary !important;
+    }
+
+    .mat-mdc-select-value,
+    .mat-mdc-select-arrow {
+      color: $dark-text-primary !important;
+    }
+
+    .mat-mdc-form-field-hint,
+    .mat-mdc-form-field-error {
+      color: $dark-text-secondary !important;
+    }
+  }
+
+  .mat-mdc-select-panel {
+    background-color: $dark-input-bg !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .mat-mdc-option {
+    color: $dark-text-primary !important;
+
+    &:hover {
+      background-color: $dark-table-row-hover !important;
+    }
+
+    &.mat-mdc-option-active {
+      background-color: rgba($dark-accent, 0.15) !important;
+    }
+  }
+
+  .mat-datepicker-content {
+    background-color: $dark-input-bg !important;
+    backdrop-filter: blur(12px);
+    color: $dark-text-primary !important;
+
+    .mat-calendar {
+      color: $dark-text-primary !important;
+    }
+
+    .mat-calendar-body-selected {
+      background-color: $dark-accent !important;
+      color: white !important;
+    }
+
+    .mat-calendar-body-cell:hover {
+      background-color: $dark-table-row-hover !important;
+    }
+  }
+}
+
+html:not(.dark-theme) {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: $light-input-bg !important;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: $radius-sm;
+    }
+
+    .mat-mdc-form-field-focus-overlay {
+      background-color: transparent !important;
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+      background-color: $light-input-bg !important;
+
+      .mdc-line-ripple::before {
+        border-bottom-color: $light-input-border !important;
+      }
+
+      .mdc-line-ripple::after {
+        border-bottom-color: $light-accent !important;
+      }
+    }
+
+    .mat-mdc-input-element {
+      color: $light-text-primary !important;
+      caret-color: $light-accent !important;
+    }
+
+    .mat-mdc-form-field-label,
+    .mat-mdc-floating-label {
+      color: $light-text-secondary !important;
+    }
+
+    .mat-mdc-select-value,
+    .mat-mdc-select-arrow {
+      color: $light-text-primary !important;
+    }
+
+    .mat-mdc-form-field-hint,
+    .mat-mdc-form-field-error {
+      color: $light-text-secondary !important;
+    }
+  }
+
+  .mat-mdc-select-panel {
+    background-color: $light-input-bg !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .mat-mdc-option {
+    color: $light-text-primary !important;
+
+    &:hover {
+      background-color: $light-table-row-hover !important;
+    }
+
+    &.mat-mdc-option-active {
+      background-color: rgba($light-accent, 0.15) !important;
+    }
+  }
+
+  .mat-datepicker-content {
+    background-color: $light-input-bg !important;
+    backdrop-filter: blur(12px);
+    color: $light-text-primary !important;
+
+    .mat-calendar {
+      color: $light-text-primary !important;
+    }
+
+    .mat-calendar-body-selected {
+      background-color: $light-accent !important;
+      color: white !important;
+    }
+
+    .mat-calendar-body-cell:hover {
+      background-color: $light-table-row-hover !important;
+    }
+  }
+}
+
+/* Material Table Styles - Theme Aware */
+html.dark-theme {
+  .mat-mdc-table {
+    background-color: transparent !important;
+
+    .mat-mdc-header-row {
+      background-color: $dark-table-header-bg !important;
+      backdrop-filter: blur(8px);
+    }
+
+    .mat-mdc-header-cell {
+      color: $dark-text-secondary !important;
+      font-weight: 700 !important;
+      border-bottom: 1px solid $dark-border !important;
+    }
+
+    .mat-mdc-row {
+      background-color: transparent !important;
+      transition: background 0.5s ease-in-out;
+
+      &:hover {
+        background-color: $dark-table-row-hover !important;
+      }
+    }
+
+    .mat-mdc-cell {
+      color: $dark-text-primary !important;
+      border-bottom: 1px solid $dark-border !important;
+    }
+  }
+}
+
+html:not(.dark-theme) {
+  .mat-mdc-table {
+    background-color: transparent !important;
+
+    .mat-mdc-header-row {
+      background-color: $light-table-header-bg !important;
+      backdrop-filter: blur(8px);
+    }
+
+    .mat-mdc-header-cell {
+      color: $light-text-secondary !important;
+      font-weight: 700 !important;
+      border-bottom: 1px solid $light-border !important;
+    }
+
+    .mat-mdc-row {
+      background-color: transparent !important;
+      transition: background 0.5s ease-in-out;
+
+      &:hover {
+        background-color: $light-table-row-hover !important;
+      }
+    }
+
+    .mat-mdc-cell {
+      color: $light-text-primary !important;
+      border-bottom: 1px solid $light-border !important;
+    }
+  }
+
+  /* Sidebar (mat-drawer) background */
+  .mat-drawer,
+  .mat-mdc-sidenav {
+    background-color: rgba($light-card-bg, 0.6) !important;
+    border-right: 1px solid $light-border !important;
+    transition: background 0.5s ease-in-out;
+
+  }
+}
+
+html.dark-theme {
+
+  /* Sidebar (mat-drawer) background */
+  .mat-drawer,
+  .mat-mdc-sidenav {
+    background: rgba(15, 15, 15, 0.85) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid $dark-border !important;
+    transition: background 0.5s ease-in-out;
+
   }
 }

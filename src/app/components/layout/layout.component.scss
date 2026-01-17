@@ -1,3 +1,5 @@
+@import '../../../assets/estilos/index';
+
 /* Estilos del layout */
 ::ng-deep {
   .mat-mdc-sidenav {
@@ -8,12 +10,14 @@
     border-radius: 0 !important;
   }
 
-  /* Fondo del sidenav en tema claro */
+  /* Fondo del contenedor con gradiente */
   .mat-drawer-container {
-    background-color: #f8f8f8;
-  }
+    html.dark-theme & {
+      background: $dark-bg-gradient;
+    }
 
-  html.dark-theme .mat-drawer-container {
-    background-color: #2a2a2a;
+    html:not(.dark-theme) & {
+      background: $light-bg-gradient;
+    }
   }
 }
