@@ -9,7 +9,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Chart, registerables } from 'chart.js';
-import { ahorrosService } from '../../services/ahorrosService.service';
 import { MatIconModule } from '@angular/material/icon';
 import { LayoutComponent } from '../layout/layout.component';
 
@@ -32,7 +31,7 @@ import { LayoutComponent } from '../layout/layout.component';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  constructor( private ahorrosService: ahorrosService) {
+  constructor( ) {
 
   }
 

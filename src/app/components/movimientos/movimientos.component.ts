@@ -13,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { LayoutComponent } from '../layout/layout.component';
 import { MovimientoService } from '../../services/movimiento.service';
-import { Movimiento } from '../../modelos/movimiento.model';
+import { Movimiento, TipoMovimiento } from '../../modelos/movimiento.model';
 
 @Component({
   selector: 'app-movimientos',
@@ -42,11 +42,17 @@ export class MovimientosComponent implements OnInit {
   movimientos: Movimiento[] = [];
   filtroForm: FormGroup;
   nuevoMovimientoForm: FormGroup;
-  displayedColumns: string[] = ['id', 'tipo', 'cantidad', 'fecha', 'acciones'];
+  displayedColumns: string[] = ['id', 'tipo', 'tipoMovimiento', 'cantidad', 'descripcion', 'fecha', 'acciones'];
+  
+  // Enum para el template
+  TipoMovimiento = TipoMovimiento;
+  tiposEgreso = [TipoMovimiento.GASTO, TipoMovimiento.INVERSION];
   
   // Estados
   mostrandoFormulario: boolean = false;
   cargandoMovimiento: boolean = false;
+  editandoMovimiento: boolean = false;
+  movimientoEnEdicion: Movimiento | null = null;
   
   // Estadísticas
   totalIngresos: number = 0;
@@ -66,8 +72,10 @@ export class MovimientosComponent implements OnInit {
 
     this.nuevoMovimientoForm = this.fb.group({
       tipo: ['ingreso', Validators.required],
+      tipoMovimiento: [TipoMovimiento.SALARIO, Validators.required],
       cantidad: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       fecha: [new Date(), Validators.required],
+      descripcion: [''],
     });
   }
 
@@ -137,11 +145,38 @@ export class MovimientosComponent implements OnInit {
 
   agregarMovimiento(): void {
     this.mostrandoFormulario = true;
+    this.editandoMovimiento = false;
+    this.movimientoEnEdicion = null;
     this.nuevoMovimientoForm.reset({
       tipo: 'ingreso',
+      tipoMovimiento: TipoMovimiento.SALARIO,
       cantidad: '',
       fecha: new Date(),
+      descripcion: '',
     });
+  }
+
+  editarMovimiento(movimiento: Movimiento): void {
+    this.mostrandoFormulario = true;
+    this.editandoMovimiento = true;
+    this.movimientoEnEdicion = movimiento;
+    this.nuevoMovimientoForm.patchValue({
+      tipo: movimiento.tipo,
+      tipoMovimiento: movimiento.tipoMovimiento,
+      cantidad: movimiento.cantidad,
+      fecha: new Date(movimiento.fecha),
+      descripcion: movimiento.descripcion || '',
+    });
+  }
+
+  onTipoChange(): void {
+    const tipo = this.nuevoMovimientoForm.get('tipo')?.value;
+    
+    if (tipo === 'ingreso') {
+      this.nuevoMovimientoForm.patchValue({ tipoMovimiento: TipoMovimiento.SALARIO });
+    } else {
+      this.nuevoMovimientoForm.patchValue({ tipoMovimiento: TipoMovimiento.GASTO });
+    }
   }
 
   cancelarMovimiento(): void {
@@ -162,23 +197,45 @@ export class MovimientosComponent implements OnInit {
     // Convertir fecha a formato ISO (localDate YYYY-MM-DD)
     const fechaISO = fecha.toISOString().split('T')[0];
 
-    const nuevoMovimiento = {
+    const datosMovimiento = {
       tipo: formValue.tipo,
+      tipoMovimiento: formValue.tipoMovimiento,
       cantidad: parseFloat(formValue.cantidad),
       fecha: fechaISO,
+      descripcion: formValue.descripcion || null,
     };
 
-    this.movimientoService.newMovimiento(nuevoMovimiento).subscribe({
-      next: () => {
-        this.toastr.success('Movimiento guardado correctamente', 'Éxito');
-        this.mostrandoFormulario = false;
-        this.cargarMovimientos();
-        this.cargandoMovimiento = false;
-      },
-      error: (error) => {
-        console.error('Error al crear movimiento:', error);
-        this.toastr.error('Error al guardar el movimiento. Intenta nuevamente', 'Error');
-        this.cargandoMovimiento = false;
-      },
-    });
+    if (this.editandoMovimiento && this.movimientoEnEdicion) {
+      // Editar movimiento existente
+      this.movimientoService.editMovimiento(this.movimientoEnEdicion.id, datosMovimiento).subscribe({
+        next: () => {
+          this.toastr.success('Movimiento actualizado correctamente', 'Éxito');
+          this.mostrandoFormulario = false;
+          this.editandoMovimiento = false;
+          this.movimientoEnEdicion = null;
+          this.cargarMovimientos();
+          this.cargandoMovimiento = false;
+        },
+        error: (error) => {
+          console.error('Error al editar movimiento:', error);
+          this.toastr.error('Error al actualizar el movimiento. Intenta nuevamente', 'Error');
+          this.cargandoMovimiento = false;
+        },
+      });
+    } else {
+      // Crear nuevo movimiento
+      this.movimientoService.newMovimiento(datosMovimiento).subscribe({
+        next: () => {
+          this.toastr.success('Movimiento guardado correctamente', 'Éxito');
+          this.mostrandoFormulario = false;
+          this.cargarMovimientos();
+          this.cargandoMovimiento = false;
+        },
+        error: (error) => {
+          console.error('Error al crear movimiento:', error);
+          this.toastr.error('Error al guardar el movimiento. Intenta nuevamente', 'Error');
+          this.cargandoMovimiento = false;
+        },
+      });
+    }
   }}

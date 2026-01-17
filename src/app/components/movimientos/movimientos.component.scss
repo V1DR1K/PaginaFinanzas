@@ -142,6 +142,21 @@
       font-weight: 600;
     }
 
+    .categoria-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background-color: #e0e0e0;
+      color: #424242;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .texto-gris {
+      color: #999;
+      font-style: italic;
+    }
+
     td {
       padding: 16px;
     }
@@ -168,6 +183,10 @@
     mat-form-field {
       flex: 1;
       min-width: 150px;
+
+      &.full-width {
+        flex-basis: 100%;
+      }
     }
   }
 

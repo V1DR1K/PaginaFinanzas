@@ -22,7 +22,6 @@ export class SidebarComponent {
     { icon: 'home', label: 'Inicio', route: '/home' },
     { icon: 'paid', label: 'Movimientos', route: '/movimientos' },
     { icon: 'savings', label: 'Ahorros', route: '/ahorros' },
-    { icon: 'settings', label: 'Configuración', route: '/configuracion' },
   ];
 
   toggleMinimizado() {
