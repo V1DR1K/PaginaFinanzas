@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LoadingComponent } from './components/loading/loading.component';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterOutlet], // Importa RouterOutlet para manejar rutas
+  imports: [RouterOutlet, LoadingComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'], // Corrige el nombre de la propiedad
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'Pagina Finanzas';
