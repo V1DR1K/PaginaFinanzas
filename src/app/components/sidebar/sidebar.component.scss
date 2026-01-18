@@ -1,5 +1,11 @@
 @import '../../../assets/estilos/index';
 
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .sidenav-header {
   display: flex;
   align-items: center;
@@ -75,30 +81,210 @@
 
 .sidenav-footer {
   display: flex;
-  align-items: center;
-  padding: $spacing-lg;
+  flex-direction: column;
+  padding: $spacing-md;
   flex-shrink: 0;
-  gap: $spacing-sm;
+  margin-top: auto; // Empuja el footer al fondo
 
   :host-context(html.dark-theme) & {
     border-top: 1px solid $dark-border;
+    background: rgba(0, 0, 0, 0.2);
   }
 
   :host-context(:not(.dark-theme)) & {
     border-top: 1px solid $light-border;
+    background: rgba(0, 0, 0, 0.02);
   }
 
-  .tema-button {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-  }
+  .user-section {
+    position: relative;
+    width: 100%;
 
-  .toggle-label {
-    font-size: 12px;
-    white-space: nowrap;
-    flex: 1;
-    @include text-secondary;
+    .user-button {
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: $spacing-md;
+      padding: $spacing-md !important;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      justify-content: flex-start !important;
+      min-height: 56px;
+      text-align: left;
+
+      ::ng-deep .mdc-button__label {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: $spacing-md;
+        width: 100%;
+      }
+
+      :host-context(html.dark-theme) & {
+        @include text-primary;
+        background: rgba(255, 255, 255, 0.03);
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.08);
+          transform: translateY(-1px);
+        }
+      }
+
+      :host-context(:not(.dark-theme)) & {
+        @include text-primary;
+        background: rgba(0, 0, 0, 0.02);
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+          transform: translateY(-1px);
+        }
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        
+        :host-context(html.dark-theme) & {
+          background: $icon-gradient-dark;
+        }
+
+        :host-context(:not(.dark-theme)) & {
+          background: $icon-gradient-light;
+        }
+
+        mat-icon {
+          color: white;
+          font-size: 22px;
+          width: 22px;
+          height: 22px;
+          line-height: 22px;
+        }
+      }
+
+      .user-name {
+        flex: 1;
+        font-size: 15px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        letter-spacing: 0.3px;
+      }
+
+      .chevron {
+        flex-shrink: 0;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        opacity: 0.7;
+        transition: transform 0.2s ease;
+      }
+    }
+
+    .user-menu {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      margin-bottom: $spacing-sm;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      animation: slideUp 0.2s ease-out;
+      z-index: 1000;
+
+      :host-context(html.dark-theme) & {
+        background-color: $dark-card-bg;
+        border: 1px solid $dark-card-border;
+      }
+
+      :host-context(:not(.dark-theme)) & {
+        background-color: $light-card-bg;
+        border: 1px solid $light-card-border;
+      }
+
+      .user-menu-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        padding: $spacing-md;
+        justify-content: flex-start;
+        border-radius: 0;
+        transition: all 0.2s ease;
+        min-height: 48px;
+
+        :host-context(html.dark-theme) & {
+          @include text-primary;
+          
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            padding-left: 18px;
+          }
+        }
+
+        :host-context(:not(.dark-theme)) & {
+          @include text-primary;
+          
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding-left: 18px;
+          }
+        }
+
+        &.logout {
+          :host-context(html.dark-theme) & {
+            color: $error-color;
+
+            &:hover {
+              background-color: rgba(248, 113, 113, 0.1);
+            }
+          }
+
+          :host-context(:not(.dark-theme)) & {
+            color: $error-color;
+
+            &:hover {
+              background-color: rgba(248, 113, 113, 0.1);
+            }
+          }
+
+          mat-icon {
+            color: $error-color;
+          }
+        }
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          margin: 0;
+        }
+
+        span {
+          font-size: 14px;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

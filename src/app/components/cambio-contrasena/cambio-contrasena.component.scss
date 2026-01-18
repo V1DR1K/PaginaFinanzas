@@ -1,0 +1,480 @@
+@import '../../../assets/estilos/variables';
+
+.cambio-contrasena-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $dark-bg-gradient;
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+
+.background-decoration {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.08) 0%, transparent 70%);
+    animation: float 25s infinite ease-in-out;
+
+    &.circle-1 {
+      width: 500px;
+      height: 500px;
+      top: -250px;
+      right: -250px;
+      animation-delay: 0s;
+    }
+
+    &.circle-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -200px;
+      left: -200px;
+      animation-delay: -12s;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(25px, -25px) scale(1.05);
+  }
+}
+
+.cambio-contrasena-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  background: $dark-card-bg;
+  border: 1px solid $dark-card-border;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: $dark-card-shadow;
+  backdrop-filter: blur(10px);
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 36px;
+  position: relative;
+
+  .btn-back {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: $dark-text-secondary;
+    background: transparent;
+    border: 1px solid $dark-border;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      color: $dark-text-primary;
+      border-color: $dark-accent;
+      background: rgba(96, 165, 250, 0.05);
+    }
+  }
+
+  .icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: $icon-gradient-dark;
+    border-radius: 16px;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3);
+
+    .icon {
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+  }
+
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: $dark-text-primary;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: $dark-text-secondary;
+  }
+}
+
+.form {
+  .divider {
+    height: 1px;
+    background: $dark-border;
+    margin: 28px 0;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $dark-text-primary;
+    margin-bottom: 8px;
+
+    .label-icon {
+      width: 18px;
+      height: 18px;
+      color: $dark-accent;
+    }
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 13px 16px;
+    font-size: 15px;
+    color: $dark-text-primary;
+    background: $dark-input-bg;
+    border: 1px solid $dark-input-border;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s ease;
+    font-family: $font-sans;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $dark-text-tertiary;
+    }
+
+    &:focus {
+      border-color: $dark-accent;
+      background: rgba(30, 30, 30, 0.9);
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    }
+
+    &.error {
+      border-color: $error-color;
+      
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+      }
+    }
+
+    &.success {
+      border-color: $success-color;
+      
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .input-with-icon {
+    position: relative;
+    width: 100%;
+
+    .form-input {
+      padding-right: 48px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      color: $dark-text-secondary;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover:not(:disabled) {
+        color: $dark-accent;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .password-strength {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+
+    .strength-bars {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+
+      .bar {
+        height: 4px;
+        flex: 1;
+        background: $dark-border;
+        border-radius: 2px;
+        transition: background-color 0.3s ease;
+
+        &.active {
+          &.weak {
+            background: $error-color;
+          }
+
+          &.medium {
+            background: $warning-color;
+          }
+
+          &.strong {
+            background: $success-color;
+          }
+        }
+      }
+    }
+
+    .strength-text {
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+
+      &.weak {
+        color: $error-color;
+      }
+
+      &.medium {
+        color: $warning-color;
+      }
+
+      &.strong {
+        color: $success-color;
+      }
+    }
+  }
+
+  .validation-message {
+    margin-top: 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .error-msg {
+      color: $error-color;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .success-msg {
+      color: $success-color;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  .form-actions {
+    margin-top: 32px;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    background: $icon-gradient-dark;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-content,
+    .btn-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.security-tips {
+  margin-top: 32px;
+  padding: 20px;
+  background: rgba(96, 165, 250, 0.05);
+  border: 1px solid rgba(96, 165, 250, 0.15);
+  border-radius: 12px;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: $dark-accent;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style: none;
+
+    li {
+      position: relative;
+      font-size: 13px;
+      color: $dark-text-secondary;
+      line-height: 1.8;
+
+      &::before {
+        content: '•';
+        position: absolute;
+        left: -16px;
+        color: $dark-accent;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 600px) {
+  .cambio-contrasena-container {
+    padding: 20px;
+  }
+
+  .cambio-contrasena-card {
+    padding: 28px 24px;
+  }
+
+  .header {
+    .btn-back {
+      position: static;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+
+    .icon-wrapper {
+      width: 56px;
+      height: 56px;
+
+      .icon {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    h1 {
+      font-size: 22px;
+    }
+  }
+}

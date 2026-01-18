@@ -16,12 +16,32 @@
 </nav>
 
 <div class="sidenav-footer">
-  <button 
-    mat-icon-button 
-    (click)="toggleTema()"
-    class="tema-button"
-    [title]="temaOscuro ? 'Modo Claro' : 'Modo Oscuro'">
-    <mat-icon>{{ temaOscuro ? 'dark_mode' : 'light_mode' }}</mat-icon>
-  </button>
-  <span class="toggle-label">{{ temaOscuro ? 'Oscuro' : 'Claro' }}</span>
+  <!-- Usuario -->
+  <div class="user-section" *ngIf="usuarioActual()">
+    <button 
+      mat-button 
+      class="user-button"
+      (click)="toggleUserMenu()">
+      <div class="user-avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+      <span class="user-name">{{ usuarioActual() }}</span>
+      <mat-icon class="chevron">{{ showUserMenu() ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+    
+    <div class="user-menu" *ngIf="showUserMenu()">
+      <button mat-button class="user-menu-item" (click)="toggleTema()">
+        <mat-icon>{{ temaOscuro ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span>{{ temaOscuro ? 'Modo Claro' : 'Modo Oscuro' }}</span>
+      </button>
+      <button mat-button class="user-menu-item" (click)="cambiarContrasena()">
+        <mat-icon>lock</mat-icon>
+        <span>Cambiar Contraseña</span>
+      </button>
+      <button mat-button class="user-menu-item logout" (click)="cerrarSesion()">
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+  </div>
 </div>

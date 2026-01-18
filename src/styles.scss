@@ -442,7 +442,9 @@ html:not(.dark-theme) {
     background-color: rgba($light-card-bg, 0.6) !important;
     border-right: 1px solid $light-border !important;
     transition: background 0.5s ease-in-out;
-
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
   /* Button Styles - Light Theme */
@@ -536,6 +538,9 @@ html.dark-theme {
     -webkit-backdrop-filter: blur(10px);
     border-right: 1px solid $dark-border !important;
     transition: background 0.5s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
   /* Button Styles - Dark Theme */

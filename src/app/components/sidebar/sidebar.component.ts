@@ -1,8 +1,10 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,6 +19,8 @@ export class SidebarComponent implements OnInit {
   @Output() temaChange = new EventEmitter<'light' | 'dark'>();
 
   temaOscuro: boolean = false;
+  usuarioActual = signal<string | null>(null);
+  showUserMenu = signal(false);
 
   menuItems = [
     { icon: 'home', label: 'Inicio', route: '/home' },
@@ -25,9 +29,20 @@ export class SidebarComponent implements OnInit {
     { icon: 'savings', label: 'Ahorros', route: '/ahorros' },
   ];
 
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
+
   ngOnInit(): void {
     const temaGuardado = localStorage.getItem('theme') || 'light';
     this.temaOscuro = temaGuardado === 'dark';
+
+    // Suscribirse al usuario actual
+    this.authService.currentUser$.subscribe(usuario => {
+      this.usuarioActual.set(usuario);
+    });
   }
 
   toggleMinimizado() {
@@ -38,5 +53,27 @@ export class SidebarComponent implements OnInit {
   toggleTema() {
     this.temaOscuro = !this.temaOscuro;
     this.temaChange.emit(this.temaOscuro ? 'dark' : 'light');
+    this.showUserMenu.set(false); // Cerrar el menú después de cambiar tema
+  }
+
+  toggleUserMenu() {
+    this.showUserMenu.update(v => !v);
+  }
+
+  cambiarContrasena() {
+    this.showUserMenu.set(false);
+    this.router.navigate(['/cambiar-contrasena']);
+  }
+
+  cerrarSesion() {
+    this.showUserMenu.set(false);
+    this.authService.logout().subscribe({
+      next: () => {
+        this.toastr.info('Has cerrado sesión correctamente', 'Hasta pronto');
+      },
+      error: (error) => {
+        console.error('Error al cerrar sesión:', error);
+      }
+    });
   }
 }
