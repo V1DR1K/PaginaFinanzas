@@ -158,50 +158,38 @@ html.dark-theme * {
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-  .contenedor-principal {
-    flex-direction: column;
-  }
-
-  .contenedor-sidenav {
-    width: 100%;
-    height: auto;
-    max-height: 60px;
-    flex-direction: row;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
-
-    &.minimizado {
-      width: 100%;
-      height: auto;
-    }
-
-    .sidenav-menu {
-      flex-direction: row;
-      overflow-x: auto;
-    }
-
-    .menu-item {
-      flex: 0 0 auto;
-      height: 56px;
-      min-width: 56px;
-      justify-content: center;
-
-      .menu-text {
-        display: none !important;
-      }
-    }
+  html,
+  body {
+    overflow: auto;
   }
 
   .contenedor-pagina {
-    flex: 1;
-    height: calc(100vh - 60px);
-    overflow-y: auto;
+    padding: $spacing-lg $spacing-md;
+    height: auto;
+    min-height: 100vh;
   }
 }
 
 @media (max-width: 480px) {
   .contenedor-pagina {
     padding: $spacing-md;
+  }
+
+  /* Ajustar tamaño de botones para touch */
+  button.mat-mdc-button,
+  button.mat-mdc-icon-button,
+  button.mat-mdc-raised-button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  /* Mejorar inputs en móvil */
+  .mat-mdc-form-field {
+    font-size: 16px !important; /* Prevenir zoom en iOS */
+  }
+
+  .mat-mdc-input-element {
+    font-size: 16px !important;
   }
 }
 

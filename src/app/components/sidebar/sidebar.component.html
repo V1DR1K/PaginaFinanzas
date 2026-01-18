@@ -1,4 +1,4 @@
-<div class="sidenav-header">
+<div class="sidenav-header" *ngIf="!isMobile">
   <button mat-icon-button (click)="toggleMinimizado()">
     <mat-icon>{{ minimizado ? 'chevron_right' : 'chevron_left' }}</mat-icon>
   </button>
@@ -9,7 +9,8 @@
     *ngFor="let item of menuItems"
     mat-button 
     class="menu-item"
-    [routerLink]="item.route">
+    [routerLink]="item.route"
+    (click)="onMenuItemClick()">
     <mat-icon>{{ item.icon }}</mat-icon>
     <span class="menu-text">{{ item.label }}</span>
   </button>

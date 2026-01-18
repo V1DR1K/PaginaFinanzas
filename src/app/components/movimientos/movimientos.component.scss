@@ -262,3 +262,160 @@
     }
   }
 }
+
+/* Móvil */
+@media (max-width: 767px) {
+  .movimientos-container {
+    padding: $spacing-xl $spacing-md;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+    padding: 0;
+    margin-bottom: $spacing-xl;
+
+    h1 {
+      font-size: 24px;
+    }
+
+    button {
+      width: 100%;
+      height: 48px;
+    }
+  }
+
+  .filtro-card {
+    padding: $spacing-lg;
+
+    .filtro-form {
+      flex-direction: column;
+      gap: $spacing-md;
+
+      mat-form-field {
+        width: 100%;
+        min-width: unset;
+      }
+    }
+
+    mat-card-actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+        min-width: unset;
+      }
+    }
+  }
+
+  .estadisticas {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+
+    .stat-card {
+      mat-card-content {
+        padding: $spacing-lg;
+
+        .stat-icon {
+          width: 44px;
+          height: 44px;
+
+          mat-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+        .stat-info {
+          .stat-label {
+            font-size: 13px;
+          }
+
+          .stat-value {
+            font-size: 20px;
+          }
+        }
+      }
+    }
+  }
+
+  /* Tabla responsive - sin scroll horizontal */
+  .tabla-card {
+    padding: $spacing-sm;
+  }
+
+  .movimientos-table {
+    width: 100%;
+    font-size: 11px;
+
+    th, td {
+      padding: $spacing-xs !important;
+      
+      &:first-child {
+        padding-left: $spacing-sm !important;
+      }
+      
+      &:last-child {
+        padding-right: $spacing-sm !important;
+      }
+    }
+
+    th {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      font-size: 11px;
+    }
+
+    /* Badge de tipo más compacto */
+    [class*='badge-'] {
+      padding: 2px 6px;
+      font-size: 9px;
+      border-radius: 4px;
+      display: inline-block;
+      font-weight: 600;
+    }
+
+    /* Badge de categoría más compacto */
+    .categoria-badge {
+      font-size: 10px;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 80px;
+    }
+
+    /* Cantidad en negrita */
+    td:has(.mat-mdc-cell) {
+      font-weight: 600;
+    }
+
+    /* Fecha más compacta */
+    .mat-column-fecha {
+      font-size: 10px;
+    }
+
+    /* Botones de acción más pequeños */
+    button {
+      padding: 2px !important;
+      min-width: 32px !important;
+      width: 32px !important;
+      height: 32px !important;
+      margin: 0 2px !important;
+
+      mat-icon {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
+  }
+}

@@ -43,6 +43,7 @@ export class MovimientosComponent implements OnInit {
   filtroForm: FormGroup;
   nuevoMovimientoForm: FormGroup;
   displayedColumns: string[] = ['id', 'tipo', 'tipoMovimiento', 'cantidad', 'descripcion', 'fecha', 'acciones'];
+  isMobile: boolean = false;
   
   // Enum para el template
   TipoMovimiento = TipoMovimiento;
@@ -80,7 +81,16 @@ export class MovimientosComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.checkScreenSize();
+    window.addEventListener('resize', () => this.checkScreenSize());
     this.cargarMovimientos();
+  }
+
+  checkScreenSize(): void {
+    this.isMobile = window.innerWidth < 768;
+    this.displayedColumns = this.isMobile 
+      ? ['tipo', 'tipoMovimiento', 'cantidad', 'fecha', 'acciones']
+      : ['id', 'tipo', 'tipoMovimiento', 'cantidad', 'descripcion', 'fecha', 'acciones'];
   }
 
   cargarMovimientos(): void {

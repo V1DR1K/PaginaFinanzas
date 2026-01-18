@@ -288,3 +288,131 @@
         max-width: 240px;
     }
 }
+
+/* Móvil */
+@media (max-width: 767px) {
+    .inversiones-container {
+        padding: $spacing-xl $spacing-md;
+    }
+
+    .panel-header {
+        flex-direction: column;
+        gap: $spacing-md;
+        padding: 0;
+        margin-bottom: $spacing-lg;
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+        }
+
+        .eyebrow {
+            font-size: 11px;
+        }
+    }
+
+    .status-group {
+        flex-wrap: wrap;
+        gap: $spacing-xs;
+
+        mat-chip {
+            font-size: 12px;
+            height: 28px;
+        }
+    }
+
+    .balance-section {
+        grid-template-columns: 1fr;
+        gap: $spacing-md;
+        padding: 0;
+        margin-bottom: $spacing-lg;
+    }
+
+    .balance-card {
+        mat-card-content {
+            padding: $spacing-lg !important;
+        }
+    }
+
+    .balance-label {
+        font-size: 20px;
+    }
+
+    .balance-amount {
+        font-size: 28px !important;
+    }
+
+    .balance-subtitle {
+        font-size: 13px;
+    }
+
+    .balance-percentage {
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        padding: 0;
+    }
+
+    .cards-grid {
+        gap: $spacing-md;
+        padding: $spacing-sm 0 $spacing-lg 0;
+        /* Scroll mejorado en móvil */
+        scroll-snap-type: x mandatory;
+        
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .token-card {
+        min-width: 260px;
+        max-width: 260px;
+        padding: $spacing-lg;
+        scroll-snap-align: start;
+
+        &:first-child {
+            margin-left: $spacing-md;
+        }
+
+        &:last-child {
+            margin-right: $spacing-md;
+        }
+    }
+
+    .token-header {
+        gap: $spacing-sm;
+    }
+
+    .token-icon {
+        width: 40px;
+        height: 40px;
+
+        mat-icon {
+            font-size: 22px;
+            width: 22px;
+            height: 22px;
+        }
+    }
+
+    .token-name {
+        font-size: 15px;
+    }
+
+    .token-id {
+        font-size: 11px;
+    }
+
+    .price {
+        font-size: 18px;
+    }
+
+    .change {
+        font-size: 13px;
+        padding: $spacing-xs $spacing-sm;
+    }
+}

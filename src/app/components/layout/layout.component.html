@@ -1,17 +1,27 @@
 <mat-sidenav-container class="contenedor-principal" autosize>
   <mat-sidenav 
     #sidenav
-    mode="side" 
-    opened 
+    [mode]="sidenavMode" 
+    [opened]="sidenavOpened"
     class="contenedor-sidenav"
-    [ngClass]="{'minimizado': sidenavMinimizado}">
+    [ngClass]="{'minimizado': sidenavMinimizado && !isMobile}">
     <app-sidebar 
       [minimizado]="sidenavMinimizado"
+      [isMobile]="isMobile"
       (minimizadoChange)="onSidebarMinimizadoChange($event)"
-      (temaChange)="onTemaChange($event)"></app-sidebar>
+      (temaChange)="onTemaChange($event)"
+      (closeSidebar)="sidenav.close()"></app-sidebar>
   </mat-sidenav>
 
   <mat-sidenav-content class="contenedor-pagina">
+    <!-- Botón hamburguesa para móvil -->
+    <button 
+      *ngIf="isMobile" 
+      mat-icon-button 
+      class="menu-toggle"
+      (click)="toggleSidenav()">
+      <mat-icon>menu</mat-icon>
+    </button>
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,8 +16,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class SidebarComponent implements OnInit {
   @Input() minimizado: boolean = false;
+  @Input() isMobile: boolean = false;
   @Output() minimizadoChange = new EventEmitter<boolean>();
   @Output() temaChange = new EventEmitter<'light' | 'dark'>();
+  @Output() closeSidebar = new EventEmitter<void>();
 
   temaOscuro: boolean = false;
   usuarioActual = signal<string | null>(null);
@@ -43,6 +46,15 @@ export class SidebarComponent implements OnInit {
     this.authService.currentUser$.subscribe(usuario => {
       this.usuarioActual.set(usuario);
     });
+
+    // Cerrar sidebar en móvil después de navegar
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      if (this.isMobile) {
+        this.closeSidebar.emit();
+      }
+    });
   }
 
   toggleMinimizado() {
@@ -54,6 +66,9 @@ export class SidebarComponent implements OnInit {
     this.temaOscuro = !this.temaOscuro;
     this.temaChange.emit(this.temaOscuro ? 'dark' : 'light');
     this.showUserMenu.set(false); // Cerrar el menú después de cambiar tema
+    if (this.isMobile) {
+      this.closeSidebar.emit();
+    }
   }
 
   toggleUserMenu() {
@@ -63,6 +78,9 @@ export class SidebarComponent implements OnInit {
   cambiarContrasena() {
     this.showUserMenu.set(false);
     this.router.navigate(['/cambiar-contrasena']);
+    if (this.isMobile) {
+      this.closeSidebar.emit();
+    }
   }
 
   cerrarSesion() {
@@ -75,5 +93,11 @@ export class SidebarComponent implements OnInit {
         console.error('Error al cerrar sesión:', error);
       }
     });
+  }
+
+  onMenuItemClick() {
+    if (this.isMobile) {
+      this.closeSidebar.emit();
+    }
   }
 }
