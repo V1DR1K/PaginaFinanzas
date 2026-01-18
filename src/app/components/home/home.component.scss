@@ -4,7 +4,8 @@
 :host {
   display: block;
 }
-.home-container{
+
+.home-container {
   @include main-container;
 }
 
@@ -18,5 +19,317 @@
   h1 {
     @include main-title;
     margin: 0;
+  }
+
+  .subtitle {
+    @include text-secondary;
+    margin-top: $spacing-xs;
+  }
+}
+
+// Estadísticas principales
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-3xl;
+
+  .stat-card {
+    @include glass-card;
+    cursor: default;
+
+    mat-card-content {
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
+      padding: $spacing-lg;
+    }
+
+    .stat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: $radius-lg;
+      
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    .stat-info {
+      flex: 1;
+
+      .stat-label {
+        @include text-secondary;
+        font-size: 0.875rem;
+        margin: 0 0 $spacing-xs 0;
+      }
+
+      .stat-value {
+        @include text-primary;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+      }
+    }
+
+    &.balance {
+      .stat-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        mat-icon {
+          color: white;
+        }
+      }
+    }
+
+    &.ingresos {
+      .stat-icon {
+        background: linear-gradient(135deg, $success-color 0%, #66bb6a 100%);
+        mat-icon {
+          color: white;
+        }
+      }
+    }
+
+    &.egresos {
+      .stat-icon {
+        background: linear-gradient(135deg, $error-color 0%, #ef5350 100%);
+        mat-icon {
+          color: white;
+        }
+      }
+    }
+
+    &.movimientos {
+      .stat-icon {
+        background: linear-gradient(135deg, #42a5f5 0%, #478ed1 100%);
+        mat-icon {
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// Acceso rápido
+.quick-access {
+  margin-bottom: $spacing-3xl;
+
+  h2 {
+    @include section-title;
+    margin-bottom: $spacing-lg;
+  }
+
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $spacing-lg;
+
+    .quick-card {
+      @include glass-card;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      mat-card-content {
+        padding: $spacing-xl;
+      }
+
+      .quick-header {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        margin-bottom: $spacing-lg;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+          color: $dark-accent;
+        }
+
+        :host-context(html.dark-theme) & mat-icon {
+          color: $light-accent;
+        }
+
+        h3 {
+          @include text-primary;
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin: 0;
+        }
+      }
+
+      .quick-stats {
+        margin-bottom: $spacing-lg;
+
+        .quick-stat {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: $spacing-sm 0;
+
+          .label {
+            @include text-secondary;
+            font-size: 0.875rem;
+          }
+
+          .value {
+            @include text-primary;
+            font-size: 1.5rem;
+            font-weight: 700;
+          }
+        }
+      }
+
+      .quick-action {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: $spacing-md;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        :host-context(html.dark-theme) & {
+          border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        span {
+          @include text-secondary;
+          font-weight: 500;
+        }
+
+        mat-icon {
+          color: $dark-accent;
+        }
+
+        :host-context(html.dark-theme) & mat-icon {
+          color: $light-accent;
+        }
+      }
+    }
+  }
+}
+
+// Sección recientes
+.recent-section {
+  overflow: visible;
+  margin-bottom: $spacing-2xl;
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+
+    h2 {
+      @include section-title;
+      margin: 0;
+    }
+
+    button {
+      @include text-secondary;
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+    }
+  }
+
+  .recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    overflow: visible;
+
+    .recent-item {
+      @include glass-card;
+
+      mat-card-content {
+        display: flex;
+        align-items: center;
+        gap: $spacing-lg;
+        padding: $spacing-lg;
+      }
+
+      .recent-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: $radius-md;
+
+        &.ingreso {
+          background: rgba($success-color, 0.15);
+          mat-icon {
+            color: $success-color;
+          }
+        }
+
+        &.egreso {
+          background: rgba($error-color, 0.15);
+          mat-icon {
+            color: $error-color;
+          }
+        }
+      }
+
+      .recent-info {
+        flex: 1;
+
+        .recent-desc {
+          @include text-primary;
+          font-weight: 500;
+          margin: 0 0 $spacing-xs 0;
+        }
+
+        .recent-date {
+          @include text-secondary;
+          font-size: 0.875rem;
+          margin: 0;
+        }
+      }
+
+      .recent-amount {
+        font-size: 1.25rem;
+        font-weight: 700;
+
+        &.ingreso {
+          color: $success-color;
+        }
+
+        &.egreso {
+          color: $error-color;
+        }
+      }
+    }
+  }
+
+  .no-data {
+    @include text-secondary;
+    text-align: center;
+    padding: $spacing-3xl;
+    font-style: italic;
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-tablet) {
+  .stats-grid,
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
   }
 }

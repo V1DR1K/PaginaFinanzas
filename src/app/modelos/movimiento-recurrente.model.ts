@@ -29,11 +29,13 @@ export interface MovimientoRecurrente {
 
 export interface MovimientoRecurrenteRequest {
   tipo: 'ingreso' | 'egreso';
-  tipoMovimiento?: string;
+  tipoMovimiento: string;
   categoriaId?: number;
   cantidad: number;
   descripcion?: string;
   frecuencia: Frecuencia;
-  proximaEjecucion: string;
+  diaEjecucion: number;
+  fechaInicio: string;
+  proximaEjecucion?: string;
   activo: boolean;
 }

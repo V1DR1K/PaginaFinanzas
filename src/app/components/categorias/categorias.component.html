@@ -1,5 +1,9 @@
 <app-layout>
   <div class="categorias-container">
+    @if (cargando()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    
     <div class="header">
       <h1>Categorías</h1>
       <button mat-raised-button (click)="nuevaCategoria()">

@@ -30,14 +30,14 @@ export class InsightService {
    * Marca un insight como leído
    */
   marcarComoLeido(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/${id}/leer`, {});
+    return this.http.post<void>(`${this.apiUrl}/${id}/leer`, {});
   }
 
   /**
    * Marca todos los insights como leídos
    */
   marcarTodosComoLeidos(): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/leer-todos`, {});
+    return this.http.post<void>(`${this.apiUrl}/leer-todos`, {});
   }
 
   /**

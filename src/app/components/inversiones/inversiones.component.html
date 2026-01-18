@@ -1,5 +1,9 @@
 <app-layout>
   <div class="inversiones-container">
+    @if (cargando) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    
     <div class="panel-header">
       <div>
         <p class="eyebrow">Panel en vivo · Bitget</p>

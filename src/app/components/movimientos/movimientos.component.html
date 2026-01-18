@@ -1,5 +1,9 @@
 <app-layout>
   <div class="movimientos-container">
+    @if (cargando) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    
     <!-- Título -->
     <div class="header">
       <h1>Movimientos</h1>

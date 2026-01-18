@@ -5,6 +5,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSortModule } from '@angular/material/sort';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Subscription } from 'rxjs';
 import { LayoutComponent } from '../layout/layout.component';
 import { BitgetSubscribeRequest, BitgetTickerUpdate, BitgetWsService, WsConnectionStatus } from '../../services/bitget-ws.service';
@@ -34,7 +35,7 @@ interface TokenHolding {
 @Component({
   selector: 'app-inversiones',
   standalone: true,
-  imports: [CommonModule, LayoutComponent, MatCardModule, MatTableModule, MatChipsModule, MatIconModule, MatSortModule],
+  imports: [CommonModule, LayoutComponent, MatCardModule, MatTableModule, MatChipsModule, MatIconModule, MatSortModule, MatProgressBarModule],
   templateUrl: './inversiones.component.html',
   styleUrls: ['./inversiones.component.scss'],
 })
@@ -82,6 +83,7 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
   private binanceStatusSub?: Subscription;
   private negativeScrollInterval?: any;
   private positiveScrollInterval?: any;
+  cargando: boolean = true;
 
   displayedColumns = ['pair', 'last', 'changePct', 'bidAsk', 'range', 'time'];
 
@@ -96,7 +98,10 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
       .map((t) => ({ instId: t.instId, instType: t.instType }));
 
     if (bitgetSubs.length) {
-      this.tickerSub = this.wsService.subscribeTickers(bitgetSubs).subscribe((update) => this.applyBitgetUpdate(update));
+      this.tickerSub = this.wsService.subscribeTickers(bitgetSubs).subscribe((update) => {
+        this.applyBitgetUpdate(update);
+        this.cargando = false;
+      });
       this.statusSub = this.wsService.connectionStatus$.subscribe((status) => {
         this.connectionStatus = status;
       });
@@ -104,7 +109,10 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const binancePairs = this.tokens.filter((t) => t.source === 'binance').map((t) => t.instId);
     if (binancePairs.length) {
-      this.binanceTickerSub = this.binanceWs.subscribeTickers(binancePairs).subscribe((update) => this.applyBinanceUpdate(update));
+      this.binanceTickerSub = this.binanceWs.subscribeTickers(binancePairs).subscribe((update) => {
+        this.applyBinanceUpdate(update);
+        this.cargando = false;
+      });
       this.binanceStatusSub = this.binanceWs.connectionStatus$.subscribe((status) => {
         this.binanceStatus = status;
       });

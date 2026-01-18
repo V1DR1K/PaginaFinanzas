@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { LayoutComponent } from '../layout/layout.component';
 import { MovimientoService } from '../../services/movimiento.service';
@@ -36,6 +37,7 @@ import { AdjuntosDialogComponent } from '../adjuntos-dialog/adjuntos-dialog.comp
     MatNativeDateModule,
     MatSelectModule,
     MatDialogModule,
+    MatProgressBarModule,
     ToastrModule,
     LayoutComponent,
   ],
@@ -64,6 +66,7 @@ export class MovimientosComponent implements OnInit {
   cargandoMovimiento: boolean = false;
   editandoMovimiento: boolean = false;
   movimientoEnEdicion: Movimiento | null = null;
+  cargando: boolean = false;
   
   // Estadísticas
   totalIngresos: number = 0;
@@ -121,14 +124,17 @@ export class MovimientosComponent implements OnInit {
   }
 
   cargarMovimientos(): void {
+    this.cargando = true;
     this.movimientoService.findAllMovimientos().subscribe({
       next: (data) => {
         this.movimientos = data;
         this.calcularEstadisticas();
+        this.cargando = false;
       },
       error: (error) => {
         console.error('Error al cargar movimientos:', error);
         this.toastr.error('Error al cargar los movimientos', 'Error');
+        this.cargando = false;
       },
     });
   }

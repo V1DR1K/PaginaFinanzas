@@ -44,14 +44,14 @@ export class MovimientoRecurrenteService {
    * Actualiza un movimiento recurrente
    */
   updateMovimientoRecurrente(id: number, request: MovimientoRecurrenteRequest): Observable<MovimientoRecurrente> {
-    return this.http.put<MovimientoRecurrente>(`${this.apiUrl}/${id}`, request);
+    return this.http.post<MovimientoRecurrente>(`${this.apiUrl}/${id}`, request);
   }
 
   /**
    * Activa/desactiva un movimiento recurrente
    */
   toggleActivo(id: number): Observable<MovimientoRecurrente> {
-    return this.http.patch<MovimientoRecurrente>(`${this.apiUrl}/${id}/toggle`, {});
+    return this.http.post<MovimientoRecurrente>(`${this.apiUrl}/${id}/toggle`, {});
   }
 
   /**

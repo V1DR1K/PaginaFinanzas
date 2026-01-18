@@ -1,11 +1,209 @@
 <app-layout>
   <div class="home-container">
+    @if (cargando()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    
     <div class="header">
-      <h1>Home</h1>
-      <button mat-raised-button >
-        <mat-icon>add</mat-icon>
-        Nuevo Movimiento
+      <div>
+        <h1>Dashboard</h1>
+        <p class="subtitle">Resumen general de tus finanzas</p>
+      </div>
+      <button mat-raised-button (click)="cargarDashboard()">
+        <mat-icon>refresh</mat-icon>
+        Actualizar
       </button>
+    </div>
+
+    <!-- Estadísticas Principales -->
+    <div class="stats-grid">
+      <mat-card class="stat-card balance">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>account_balance_wallet</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Balance Total</p>
+            <p class="stat-value">${{ balance() | number: '1.2-2' }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card ingresos">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>arrow_upward</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Total Ingresos</p>
+            <p class="stat-value">${{ totalIngresos() | number: '1.2-2' }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card egresos">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>arrow_downward</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Total Egresos</p>
+            <p class="stat-value">${{ totalEgresos() | number: '1.2-2' }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card movimientos">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>swap_vert</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Total Movimientos</p>
+            <p class="stat-value">{{ totalMovimientos() }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Secciones Rápidas -->
+    <div class="quick-access">
+      <h2>Acceso Rápido</h2>
+      <div class="quick-grid">
+        <!-- Movimientos -->
+        <mat-card class="quick-card" (click)="navegarA('/movimientos')">
+          <mat-card-content>
+            <div class="quick-header">
+              <mat-icon>receipt_long</mat-icon>
+              <h3>Movimientos</h3>
+            </div>
+            <div class="quick-stats">
+              <div class="quick-stat">
+                <span class="label">Total</span>
+                <span class="value">{{ totalMovimientos() }}</span>
+              </div>
+            </div>
+            <div class="quick-action">
+              <span>Ver todos</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Categorías -->
+        <mat-card class="quick-card" (click)="navegarA('/categorias')">
+          <mat-card-content>
+            <div class="quick-header">
+              <mat-icon>category</mat-icon>
+              <h3>Categorías</h3>
+            </div>
+            <div class="quick-stats">
+              <div class="quick-stat">
+                <span class="label">Total</span>
+                <span class="value">{{ totalCategorias() }}</span>
+              </div>
+            </div>
+            <div class="quick-action">
+              <span>Gestionar</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Recurrentes -->
+        <mat-card class="quick-card" (click)="navegarA('/recurrentes')">
+          <mat-card-content>
+            <div class="quick-header">
+              <mat-icon>event_repeat</mat-icon>
+              <h3>Recurrentes</h3>
+            </div>
+            <div class="quick-stats">
+              <div class="quick-stat">
+                <span class="label">Activos</span>
+                <span class="value">{{ recurrentesActivos() }} / {{ totalRecurrentes() }}</span>
+              </div>
+            </div>
+            <div class="quick-action">
+              <span>Ver todos</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Insights -->
+        <mat-card class="quick-card" (click)="navegarA('/insights')">
+          <mat-card-content>
+            <div class="quick-header">
+              <mat-icon>auto_awesome</mat-icon>
+              <h3>Insights</h3>
+            </div>
+            <div class="quick-stats">
+              <div class="quick-stat">
+                <span class="label">Nuevos</span>
+                <span class="value">{{ insightsNoLeidos() }} / {{ totalInsights() }}</span>
+              </div>
+            </div>
+            <div class="quick-action">
+              <span>Ver insights</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Inversiones -->
+        <mat-card class="quick-card" (click)="navegarA('/inversiones')">
+          <mat-card-content>
+            <div class="quick-header">
+              <mat-icon>trending_up</mat-icon>
+              <h3>Inversiones</h3>
+            </div>
+            <div class="quick-stats">
+              <div class="quick-stat">
+                <span class="label">Panel</span>
+                <span class="value">En vivo</span>
+              </div>
+            </div>
+            <div class="quick-action">
+              <span>Ver panel</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Últimos Movimientos -->
+    <div class="recent-section">
+      <div class="section-header">
+        <h2>Últimos Movimientos</h2>
+        <button mat-button (click)="navegarA('/movimientos')">
+          Ver todos
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+      
+      @if (ultimosMovimientos().length > 0) {
+        <div class="recent-list">
+          @for (mov of ultimosMovimientos(); track mov.id) {
+            <mat-card class="recent-item">
+              <mat-card-content>
+                <div class="recent-icon" [class.ingreso]="mov.tipo === 'ingreso'" [class.egreso]="mov.tipo === 'egreso'">
+                  <mat-icon>{{ mov.tipo === 'ingreso' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                </div>
+                <div class="recent-info">
+                  <p class="recent-desc">{{ mov.descripcion || 'Sin descripción' }}</p>
+                  <p class="recent-date">{{ mov.fecha }}</p>
+                </div>
+                <div class="recent-amount" [class.ingreso]="mov.tipo === 'ingreso'" [class.egreso]="mov.tipo === 'egreso'">
+                  {{ mov.tipo === 'ingreso' ? '+' : '-' }}${{ mov.cantidad | number: '1.2-2' }}
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      } @else {
+        <p class="no-data">No hay movimientos registrados</p>
+      }
     </div>
   </div>
 </app-layout>

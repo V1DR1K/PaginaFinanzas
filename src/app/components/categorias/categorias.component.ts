@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ToastrService } from 'ngx-toastr';
 import { LayoutComponent } from '../layout/layout.component';
 import { CategoriaService } from '../../services/categoria.service';
@@ -25,6 +26,7 @@ import { Categoria, CategoriaRequest } from '../../modelos/categoria.model';
     MatInputModule,
     MatSelectModule,
     MatCardModule,
+    MatProgressBarModule,
     LayoutComponent
   ],
   templateUrl: './categorias.component.html',
@@ -35,6 +37,7 @@ export class CategoriasComponent implements OnInit {
   categoriasIngresos = signal<Categoria[]>([]);
   categoriasEgresos = signal<Categoria[]>([]);
   mostrandoFormulario = signal(false);
+  cargando = signal(false);
   editando = signal(false);
   categoriaForm: FormGroup;
   categoriaSeleccionada: Categoria | null = null;
@@ -72,15 +75,18 @@ export class CategoriasComponent implements OnInit {
   }
 
   cargarCategorias(): void {
+    this.cargando.set(true);
     this.categoriaService.getCategorias().subscribe({
       next: (data) => {
         this.categorias.set(data);
-        this.categoriasIngresos.set(data.filter(c => c.tipo === 'ingreso' && !c.categoriaPadreId));
-        this.categoriasEgresos.set(data.filter(c => c.tipo === 'egreso' && !c.categoriaPadreId));
+        this.categoriasIngresos.set(data.filter(c => c.tipo === 'ingreso'));
+        this.categoriasEgresos.set(data.filter(c => c.tipo === 'egreso'));
+        this.cargando.set(false);
       },
       error: (error) => {
         console.error('Error al cargar categorías:', error);
         this.toastr.error('Error al cargar las categorías', 'Error');
+        this.cargando.set(false);
       }
     });
   }

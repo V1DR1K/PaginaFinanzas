@@ -10,6 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ToastrService } from 'ngx-toastr';
 import { LayoutComponent } from '../layout/layout.component';
 import { MovimientoRecurrenteService } from '../../services/movimiento-recurrente.service';
@@ -33,6 +34,7 @@ import { Categoria } from '../../modelos/categoria.model';
     MatCardModule,
     MatChipsModule,
     MatTooltipModule,
+    MatProgressBarModule,
     LayoutComponent
   ],
   templateUrl: './recurrentes.component.html',
@@ -42,6 +44,7 @@ export class RecurrentesComponent implements OnInit {
   recurrentes = signal<MovimientoRecurrente[]>([]);
   categorias = signal<Categoria[]>([]);
   mostrandoFormulario = signal(false);
+  cargando = signal(false);
   editando = signal(false);
   recurrenteForm: FormGroup;
   recurrenteSeleccionado: MovimientoRecurrente | null = null;
@@ -70,7 +73,8 @@ export class RecurrentesComponent implements OnInit {
       tipo: ['egreso', Validators.required],
       categoriaId: ['', Validators.required],
       frecuencia: ['MENSUAL', Validators.required],
-      proximaEjecucion: ['', Validators.required],
+      diaEjecucion: [1, [Validators.required, Validators.min(1), Validators.max(31)]],
+      fechaInicio: ['', Validators.required],
       activo: [true]
     });
   }
@@ -81,13 +85,16 @@ export class RecurrentesComponent implements OnInit {
   }
 
   cargarRecurrentes(): void {
+    this.cargando.set(true);
     this.recurrenteService.getMovimientosRecurrentes().subscribe({
       next: (data) => {
         this.recurrentes.set(data);
+        this.cargando.set(false);
       },
       error: (error) => {
         console.error('Error al cargar movimientos recurrentes:', error);
         this.toastr.error('Error al cargar los movimientos', 'Error');
+        this.cargando.set(false);
       }
     });
   }
@@ -110,8 +117,9 @@ export class RecurrentesComponent implements OnInit {
     this.recurrenteForm.reset({
       tipo: 'egreso',
       frecuencia: 'MENSUAL',
+      diaEjecucion: new Date().getDate(),
       activo: true,
-      proximaEjecucion: hoy
+      fechaInicio: hoy
     });
     this.mostrandoFormulario.set(true);
   }
@@ -119,14 +127,15 @@ export class RecurrentesComponent implements OnInit {
   editarRecurrente(recurrente: MovimientoRecurrente): void {
     this.editando.set(true);
     this.recurrenteSeleccionado = recurrente;
-    const fecha = recurrente.proximaEjecucion ? new Date(recurrente.proximaEjecucion).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    const fecha = recurrente.fechaInicio ? new Date(recurrente.fechaInicio).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
     this.recurrenteForm.patchValue({
       descripcion: recurrente.descripcion,
       cantidad: recurrente.cantidad,
       tipo: recurrente.tipo,
       categoriaId: recurrente.categoriaId,
       frecuencia: recurrente.frecuencia,
-      proximaEjecucion: fecha,
+      diaEjecucion: recurrente.diaEjecucion,
+      fechaInicio: fecha,
       activo: recurrente.activo
     });
     this.mostrandoFormulario.set(true);
@@ -143,9 +152,11 @@ export class RecurrentesComponent implements OnInit {
       descripcion: formValue.descripcion,
       cantidad: Number(formValue.cantidad),
       tipo: formValue.tipo,
+      tipoMovimiento: 'GASTO', // Valor por defecto, puede ser mejorado
       categoriaId: Number(formValue.categoriaId),
       frecuencia: formValue.frecuencia,
-      proximaEjecucion: formValue.proximaEjecucion,
+      diaEjecucion: Number(formValue.diaEjecucion),
+      fechaInicio: formValue.fechaInicio,
       activo: formValue.activo
     };
 

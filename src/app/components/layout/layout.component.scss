@@ -8,8 +8,9 @@
 
 .contenedor-pagina {
   position: relative;
-  height: 100%;
-  overflow: auto;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Botón hamburguesa para móvil */
@@ -77,6 +78,8 @@
   /* Ancho del sidenav */
   .contenedor-sidenav {
     width: 280px;
+    height: 100vh;
+    overflow: hidden;
     transition: width 0.3s ease;
 
     &.minimizado {
