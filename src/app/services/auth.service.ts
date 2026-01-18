@@ -40,8 +40,19 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    // No verificamos con el servidor al inicio
-    // El usuario debe hacer login explícitamente
+    // Intentar recuperar el estado de la sesión
+    const savedToken = sessionStorage.getItem('token');
+    const savedUser = sessionStorage.getItem('user');
+    
+    console.log('AuthService constructor - savedToken:', savedToken ? 'exists' : 'null', 'savedUser:', savedUser);
+    
+    if (savedToken && savedUser) {
+      this.token = savedToken;
+      this.setAuthState(true, savedUser);
+      console.log('Estado restaurado desde sessionStorage');
+    } else {
+      console.log('No hay sesión guardada');
+    }
   }
 
   /**
@@ -55,11 +66,15 @@ export class AuthService {
     ).pipe(
       tap(response => {
         this.token = response.token; // Guardar token en memoria
+        sessionStorage.setItem('token', response.token);
+        sessionStorage.setItem('user', response.usuario);
         this.setAuthState(true, response.usuario);
       }),
       catchError(error => {
         this.setAuthState(false, null);
         this.token = null;
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
         throw error;
       })
     );
@@ -82,6 +97,8 @@ export class AuthService {
    */
   logout(): Observable<any> {
     this.token = null;
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     this.setAuthState(false, null);
     this.router.navigate(['/login']);
     return of(null);
@@ -91,10 +108,12 @@ export class AuthService {
    * Establece el estado de autenticación
    */
   private setAuthState(isLoggedIn: boolean, usuario: string | null): void {
+    console.log('setAuthState llamado - isLoggedIn:', isLoggedIn, 'usuario:', usuario);
     this.loggedIn.set(isLoggedIn);
     this.currentUser.set(usuario);
     this.isLoggedIn$.next(isLoggedIn);
     this.currentUser$.next(usuario);
+    console.log('BehaviorSubjects actualizados');
   }
 
   /**
