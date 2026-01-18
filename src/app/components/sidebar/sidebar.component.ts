@@ -29,7 +29,9 @@ export class SidebarComponent implements OnInit {
     { icon: 'home', label: 'Inicio', route: '/home' },
     { icon: 'paid', label: 'Movimientos', route: '/movimientos' },
     { icon: 'trending_up', label: 'Inversiones', route: '/inversiones' },
-    { icon: 'savings', label: 'Ahorros', route: '/ahorros' },
+    { icon: 'category', label: 'Categorías', route: '/categorias' },
+    { icon: 'event_repeat', label: 'Recurrentes', route: '/recurrentes' },
+    { icon: 'auto_awesome', label: 'Insights', route: '/insights' },
   ];
 
   constructor(

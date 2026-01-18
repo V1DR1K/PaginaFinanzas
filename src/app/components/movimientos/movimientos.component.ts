@@ -10,10 +10,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { LayoutComponent } from '../layout/layout.component';
 import { MovimientoService } from '../../services/movimiento.service';
+import { CategoriaService } from '../../services/categoria.service';
 import { Movimiento, TipoMovimiento } from '../../modelos/movimiento.model';
+import { Categoria } from '../../modelos/categoria.model';
+import { AdjuntosDialogComponent } from '../adjuntos-dialog/adjuntos-dialog.component';
 
 @Component({
   selector: 'app-movimientos',
@@ -31,6 +35,7 @@ import { Movimiento, TipoMovimiento } from '../../modelos/movimiento.model';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
+    MatDialogModule,
     ToastrModule,
     LayoutComponent,
   ],
@@ -45,7 +50,12 @@ export class MovimientosComponent implements OnInit {
   displayedColumns: string[] = ['id', 'tipo', 'tipoMovimiento', 'cantidad', 'descripcion', 'fecha', 'acciones'];
   isMobile: boolean = false;
   
-  // Enum para el template
+  // Categorías
+  categorias: Categoria[] = [];
+  categoriasIngresos: Categoria[] = [];
+  categoriasEgresos: Categoria[] = [];
+  
+  // Enum para el template (legacy)
   TipoMovimiento = TipoMovimiento;
   tiposEgreso = [TipoMovimiento.GASTO, TipoMovimiento.INVERSION];
   
@@ -62,8 +72,10 @@ export class MovimientosComponent implements OnInit {
 
   constructor(
     private movimientoService: MovimientoService,
+    private categoriaService: CategoriaService,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {
     this.filtroForm = this.fb.group({
       mes: [new Date().getMonth() + 1],
@@ -73,7 +85,7 @@ export class MovimientosComponent implements OnInit {
 
     this.nuevoMovimientoForm = this.fb.group({
       tipo: ['ingreso', Validators.required],
-      tipoMovimiento: [TipoMovimiento.SALARIO, Validators.required],
+      categoriaId: ['', Validators.required],
       cantidad: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       fecha: [new Date(), Validators.required],
       descripcion: [''],
@@ -83,6 +95,7 @@ export class MovimientosComponent implements OnInit {
   ngOnInit(): void {
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
+    this.cargarCategorias();
     this.cargarMovimientos();
   }
 
@@ -91,6 +104,20 @@ export class MovimientosComponent implements OnInit {
     this.displayedColumns = this.isMobile 
       ? ['tipo', 'tipoMovimiento', 'cantidad', 'fecha', 'acciones']
       : ['id', 'tipo', 'tipoMovimiento', 'cantidad', 'descripcion', 'fecha', 'acciones'];
+  }
+
+  cargarCategorias(): void {
+    this.categoriaService.getCategorias().subscribe({
+      next: (data: Categoria[]) => {
+        this.categorias = data;
+        this.categoriasIngresos = data.filter((c: Categoria) => c.tipo === 'ingreso');
+        this.categoriasEgresos = data.filter((c: Categoria) => c.tipo === 'egreso');
+      },
+      error: (error: any) => {
+        console.error('Error al cargar categorías:', error);
+        this.toastr.error('Error al cargar las categorías', 'Error');
+      },
+    });
   }
 
   cargarMovimientos(): void {
@@ -104,6 +131,12 @@ export class MovimientosComponent implements OnInit {
         this.toastr.error('Error al cargar los movimientos', 'Error');
       },
     });
+  }
+
+  getNombreCategoria(categoriaId: number | undefined): string {
+    if (!categoriaId) return 'Sin categoría';
+    const categoria = this.categorias.find(c => c.id === categoriaId);
+    return categoria ? categoria.nombre : 'Sin categoría';
   }
 
   calcularEstadisticas(): void {
@@ -157,9 +190,14 @@ export class MovimientosComponent implements OnInit {
     this.mostrandoFormulario = true;
     this.editandoMovimiento = false;
     this.movimientoEnEdicion = null;
+    
+    const tipo = 'ingreso';
+    const categoriasPorTipo = this.categoriasIngresos;
+    const primeraCategoria = categoriasPorTipo.length > 0 ? categoriasPorTipo[0].id : '';
+    
     this.nuevoMovimientoForm.reset({
-      tipo: 'ingreso',
-      tipoMovimiento: TipoMovimiento.SALARIO,
+      tipo: tipo,
+      categoriaId: primeraCategoria,
       cantidad: '',
       fecha: new Date(),
       descripcion: '',
@@ -172,7 +210,7 @@ export class MovimientosComponent implements OnInit {
     this.movimientoEnEdicion = movimiento;
     this.nuevoMovimientoForm.patchValue({
       tipo: movimiento.tipo,
-      tipoMovimiento: movimiento.tipoMovimiento,
+      categoriaId: movimiento.categoriaId || '',
       cantidad: movimiento.cantidad,
       fecha: new Date(movimiento.fecha),
       descripcion: movimiento.descripcion || '',
@@ -181,12 +219,10 @@ export class MovimientosComponent implements OnInit {
 
   onTipoChange(): void {
     const tipo = this.nuevoMovimientoForm.get('tipo')?.value;
+    const categoriasPorTipo = tipo === 'ingreso' ? this.categoriasIngresos : this.categoriasEgresos;
+    const primeraCategoria = categoriasPorTipo.length > 0 ? categoriasPorTipo[0].id : '';
     
-    if (tipo === 'ingreso') {
-      this.nuevoMovimientoForm.patchValue({ tipoMovimiento: TipoMovimiento.SALARIO });
-    } else {
-      this.nuevoMovimientoForm.patchValue({ tipoMovimiento: TipoMovimiento.GASTO });
-    }
+    this.nuevoMovimientoForm.patchValue({ categoriaId: primeraCategoria });
   }
 
   cancelarMovimiento(): void {
@@ -209,7 +245,7 @@ export class MovimientosComponent implements OnInit {
 
     const datosMovimiento = {
       tipo: formValue.tipo,
-      tipoMovimiento: formValue.tipoMovimiento,
+      categoriaId: parseInt(formValue.categoriaId),
       cantidad: parseFloat(formValue.cantidad),
       fecha: fechaISO,
       descripcion: formValue.descripcion || null,
@@ -248,4 +284,12 @@ export class MovimientosComponent implements OnInit {
         },
       });
     }
-  }}
+  }
+
+  abrirAdjuntos(movimiento: Movimiento): void {
+    this.dialog.open(AdjuntosDialogComponent, {
+      width: '600px',
+      data: { movimientoId: movimiento.id }
+    });
+  }
+}

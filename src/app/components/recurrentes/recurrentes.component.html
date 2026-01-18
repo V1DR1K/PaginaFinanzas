@@ -1,0 +1,144 @@
+<app-layout>
+  <div class="recurrentes-container">
+    <div class="header">
+      <h1>Recurrentes</h1>
+      <button mat-raised-button (click)="nuevoRecurrente()">
+        <mat-icon>add</mat-icon>
+        Nuevo Recurrente
+      </button>
+    </div>
+
+    <!-- Formulario -->
+    @if (mostrandoFormulario()) {
+      <div class="formulario-card">
+        <h2>{{ editando() ? 'Editar' : 'Nuevo' }} Movimiento Recurrente</h2>
+        <form [formGroup]="recurrenteForm" (ngSubmit)="guardar()">
+          <mat-form-field appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <input matInput formControlName="descripcion" placeholder="Ej: Alquiler mensual">
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Cantidad</mat-label>
+              <input matInput type="number" formControlName="cantidad" placeholder="0.00">
+              <span matPrefix>$&nbsp;</span>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo</mat-label>
+              <mat-select formControlName="tipo">
+                <mat-option value="ingreso">Ingreso</mat-option>
+                <mat-option value="egreso">Egreso</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Categoría</mat-label>
+              <mat-select formControlName="categoriaId">
+                @for (cat of categoriasPorTipo; track cat.id) {
+                  <mat-option [value]="cat.id">
+                    <mat-icon [style.color]="cat.color">{{ cat.icono }}</mat-icon>
+                    {{ cat.nombre }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Frecuencia</mat-label>
+              <mat-select formControlName="frecuencia">
+                @for (frec of frecuencias; track frec) {
+                  <mat-option [value]="frec">{{ frecuenciaLabels[frec] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Próxima ejecución</mat-label>
+            <input matInput type="date" formControlName="proximaEjecucion">
+          </mat-form-field>
+
+          <div class="activo-toggle">
+            <mat-slide-toggle formControlName="activo">Activo</mat-slide-toggle>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit">
+              {{ editando() ? 'Actualizar' : 'Crear' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Lista de Recurrentes -->
+    <div class="recurrentes-grid">
+      @for (recurrente of recurrentes(); track recurrente.id) {
+        <div class="recurrente-card" [class.inactivo]="!recurrente.activo">
+          <div class="card-header" [class.ingreso]="recurrente.tipo === 'ingreso'" [class.egreso]="recurrente.tipo === 'egreso'">
+            <div class="tipo-badge">
+              <mat-icon>{{ recurrente.tipo === 'ingreso' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+              {{ recurrente.tipo === 'ingreso' ? 'Ingreso' : 'Egreso' }}
+            </div>
+            <mat-chip [class.activo]="recurrente.activo" [class.inactivo]="!recurrente.activo">
+              {{ recurrente.activo ? 'Activo' : 'Inactivo' }}
+            </mat-chip>
+          </div>
+
+          <div class="card-body">
+            <h3>{{ recurrente.descripcion }}</h3>
+            <div class="cantidad">
+              ${{ recurrente.cantidad | number:'1.2-2' }}
+            </div>
+            <div class="detalles">
+              <div class="detalle-item">
+                <mat-icon>category</mat-icon>
+                <span>{{ getNombreCategoria(recurrente.categoriaId ?? 0) }}</span>
+              </div>
+              <div class="detalle-item">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ frecuenciaLabels[recurrente.frecuencia] }}</span>
+              </div>
+              <div class="detalle-item">
+                <mat-icon>event</mat-icon>
+                <span>{{ formatearFecha(recurrente.proximaEjecucion ?? '') }}</span>
+              </div>
+              @if (recurrente.ultimaEjecucion) {
+                <div class="detalle-item">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>Última: {{ formatearFecha(recurrente.ultimaEjecucion) }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button mat-icon-button (click)="toggleActivo(recurrente)" [matTooltip]="recurrente.activo ? 'Desactivar' : 'Activar'">
+              <mat-icon>{{ recurrente.activo ? 'pause_circle' : 'play_circle' }}</mat-icon>
+            </button>
+            <button mat-icon-button (click)="ejecutarAhora(recurrente)" matTooltip="Ejecutar ahora">
+              <mat-icon>play_arrow</mat-icon>
+            </button>
+            <button mat-icon-button (click)="editarRecurrente(recurrente)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarRecurrente(recurrente)" matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+      @if (recurrentes().length === 0) {
+        <div class="no-data">
+          <mat-icon>event_repeat</mat-icon>
+          <p>No hay movimientos recurrentes configurados</p>
+        </div>
+      }
+    </div>
+  </div>
+</app-layout>

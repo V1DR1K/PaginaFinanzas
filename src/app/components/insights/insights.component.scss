@@ -1,0 +1,373 @@
+@import '../../../assets/estilos/index';
+
+:host {
+  display: block;
+}
+
+.insights-container {
+  @include main-container;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-2xl;
+  padding: 0 $spacing-md;
+
+  h1 {
+    @include main-title;
+    margin: 0;
+  }
+
+  .subtitle {
+    @include subtitle;
+  }
+}
+
+  mat-progress-bar {
+    margin-bottom: 2rem;
+    border-radius: 4px;
+  }
+
+  .resumen-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-xl;
+    margin-bottom: $spacing-3xl;
+    padding: 0 $spacing-md;
+
+    .resumen-card {
+      @include glass-card;
+      padding: $spacing-xl;
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+
+        &.icon-insights {
+          color: #ffc107;
+        }
+
+        &.icon-nuevos {
+          color: #2196f3;
+        }
+
+        &.icon-alertas {
+          color: #f44336;
+        }
+      }
+
+      .resumen-info {
+        .numero {
+          font-size: 2rem;
+          font-weight: 700;
+          @include text-primary;
+        }
+
+        .label {
+          font-size: 0.9rem;
+          @include text-secondary;
+        }
+      }
+    }
+  }
+
+  .seccion {
+    margin-bottom: $spacing-3xl;
+    padding: 0 $spacing-md;
+
+    .seccion-titulo {
+      @include section-title;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      margin-bottom: $spacing-xl;
+
+      mat-icon {
+        :host-context(html.dark-theme) & {
+          color: $dark-accent;
+        }
+        
+        :host-context(:not(.dark-theme)) & {
+          color: $light-accent;
+        }
+      }
+    }
+
+    .no-data {
+      @include glass-card;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-lg;
+      padding: $spacing-3xl $spacing-2xl;
+      text-align: center;
+
+      mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        @include text-secondary;
+      }
+
+      p {
+        font-size: 1.1rem;
+        margin: 0;
+        @include text-secondary;
+      }
+
+      small {
+        @include text-secondary;
+        max-width: 400px;
+      }
+    }
+  }
+
+  .gastos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: $spacing-xl;
+
+    .gasto-card {
+      @include glass-card;
+      padding: $spacing-xl;
+      border-left: 4px solid $error-color;
+
+      &.alerta {
+        :host-context(html.dark-theme) & {
+          background: rgba($error-color, 0.08);
+        }
+        
+        :host-context(:not(.dark-theme)) & {
+          background: rgba($error-color, 0.05);
+        }
+      }
+
+      .gasto-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        mat-icon {
+          color: $error-color;
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
+
+        .gasto-fecha {
+          font-size: 0.85rem;
+          @include text-secondary;
+        }
+      }
+
+      .gasto-body {
+        .gasto-descripcion {
+          font-size: 1.1rem;
+          font-weight: 500;
+          @include text-primary;
+          margin-bottom: 0.5rem;
+        }
+
+        .gasto-cantidad {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: $error-color;
+          margin-bottom: 1rem;
+        }
+
+        .gasto-comparacion {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+          padding: 1rem;
+          border-radius: 8px;
+          
+          :host-context(html.dark-theme) & {
+            background: rgba(255, 255, 255, 0.05);
+          }
+          
+          :host-context(:not(.dark-theme)) & {
+            background: rgba(0, 0, 0, 0.03);
+          }
+
+          .comparacion-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+
+            .label {
+              @include text-secondary;
+            }
+
+            .valor {
+              @include text-primary;
+              font-weight: 500;
+
+              &.porcentaje {
+                color: $error-color;
+              }
+            }
+          }
+        }
+
+        .gasto-motivo {
+          font-size: 0.9rem;
+          @include text-secondary;
+          font-style: italic;
+        }
+      }
+    }
+  }
+
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: $spacing-xl;
+
+    .insight-card {
+      @include glass-card;
+      padding: $spacing-xl;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+
+      &:hover {
+        transform: translateY(-4px);
+      }
+
+      &.no-leido {
+        :host-context(html.dark-theme) & {
+          border: 2px solid rgba($dark-accent, 0.5);
+          background: rgba($dark-accent, 0.08);
+        }
+        
+        :host-context(:not(.dark-theme)) & {
+          border: 2px solid rgba($light-accent, 0.5);
+          background: rgba($light-accent, 0.05);
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 4px;
+          
+          :host-context(html.dark-theme) & {
+            background: linear-gradient(90deg, $dark-accent 0%, darken($dark-accent, 10%) 100%);
+          }
+          
+          :host-context(:not(.dark-theme)) & {
+            background: linear-gradient(90deg, $light-accent 0%, darken($light-accent, 10%) 100%);
+          }
+        }
+      }
+
+      .insight-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      .insight-body {
+        margin-bottom: 1rem;
+        position: relative;
+
+        h3 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          @include text-primary;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          @include text-secondary;
+          line-height: 1.6;
+          font-size: 0.95rem;
+        }
+
+        .badge-nuevo {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: $spacing-xs $spacing-md;
+          border-radius: $radius-md;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: white;
+          
+          :host-context(html.dark-theme) & {
+            background: linear-gradient(135deg, $dark-accent 0%, darken($dark-accent, 10%) 100%);
+          }
+          
+          :host-context(:not(.dark-theme)) & {
+            background: linear-gradient(135deg, $light-accent 0%, darken($light-accent, 10%) 100%);
+          }
+        }
+      }
+
+      .insight-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        
+        :host-context(html.dark-theme) & {
+          border-top: 1px solid $dark-border;
+        }
+        
+        :host-context(:not(.dark-theme)) & {
+          border-top: 1px solid $light-border;
+        }
+
+        .tipo-badge {
+          font-size: 0.85rem;
+          @include text-secondary;
+          font-weight: 500;
+        }
+
+        .fecha {
+          font-size: 0.8rem;
+          @include text-secondary;
+        }
+      }
+    }
+  }
+
+@media (max-width: $breakpoint-tablet) {
+  .insights-container {
+    .header {
+      flex-direction: column;
+      gap: $spacing-lg;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    .resumen-cards,
+    .gastos-grid,
+    .insights-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -7,7 +7,8 @@ export enum TipoMovimiento {
 export interface Movimiento {
   id: number;
   tipo: 'ingreso' | 'egreso';
-  tipoMovimiento: TipoMovimiento;
+  tipoMovimiento?: TipoMovimiento;
+  categoriaId: number;
   cantidad: number;
   fecha: string;
   descripcion?: string;

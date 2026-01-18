@@ -1,0 +1,241 @@
+@import '../../../assets/estilos/index';
+
+:host {
+  display: block;
+}
+
+.categorias-container {
+  @include main-container;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-2xl;
+  padding: 0 $spacing-md;
+
+  h1 {
+    @include main-title;
+    margin: 0;
+  }
+}
+
+  .formulario-card {
+    @include glass-card;
+    padding: $spacing-2xl;
+    margin-bottom: $spacing-2xl;
+    margin: 0 $spacing-md $spacing-2xl;
+
+    h2 {
+      @include section-title;
+      margin-bottom: $spacing-xl;
+    }
+
+    form {
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+
+        mat-form-field {
+          width: 100%;
+        }
+      }
+
+      .color-picker {
+        margin: 1.5rem 0;
+
+        label {
+          display: block;
+          margin-bottom: 0.5rem;
+          @include text-secondary;
+          font-size: 0.9rem;
+        }
+
+        .colores {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+
+          .color-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+
+            &:hover {
+              transform: scale(1.1);
+            }
+
+            &.selected {
+              :host-context(html.dark-theme) & {
+                border-color: $dark-text-primary;
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+              }
+              
+              :host-context(:not(.dark-theme)) & {
+                border-color: $light-text-primary;
+                box-shadow: 0 0 10px rgba(15, 23, 42, 0.5);
+              }
+            }
+          }
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+    }
+  }
+
+  .categorias-section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2xl;
+    padding: 0 $spacing-md;
+
+    .tipo-section {
+      .tipo-titulo {
+        @include section-title;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-size: 20px;
+        margin-bottom: $spacing-lg;
+
+        &.ingreso {
+          color: $success-color;
+        }
+
+        &.egreso {
+          color: $error-color;
+        }
+      }
+
+      .categorias-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+
+        .categoria-card {
+          @include glass-card;
+          padding: $spacing-xl;
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+          }
+
+          .categoria-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+
+            .categoria-info {
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+
+              mat-icon {
+                font-size: 28px;
+                width: 28px;
+                height: 28px;
+              }
+
+              .categoria-nombre {
+                font-size: 1.1rem;
+                font-weight: 500;
+                @include text-primary;
+              }
+            }
+
+            .categoria-actions {
+              display: flex;
+              gap: 0.25rem;
+
+              button {
+                width: 36px;
+                height: 36px;
+
+                mat-icon {
+                  font-size: 20px;
+                  width: 20px;
+                  height: 20px;
+                }
+              }
+            }
+          }
+
+          .subcategorias {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+            .subcategoria-item {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              padding: 0.5rem;
+              border-radius: 8px;
+              font-size: 0.9rem;
+              @include text-secondary;
+              
+              :host-context(html.dark-theme) & {
+                background: rgba(255, 255, 255, 0.05);
+              }
+              
+              :host-context(:not(.dark-theme)) & {
+                background: rgba(0, 0, 0, 0.03);
+              }
+
+              mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+              }
+            }
+          }
+        }
+
+        .no-data {
+          grid-column: 1 / -1;
+          text-align: center;
+          @include text-secondary;
+          padding: 2rem;
+        }
+      }
+    }
+  }
+
+@media (max-width: $breakpoint-tablet) {
+  .categorias-container {
+    .header {
+      flex-direction: column;
+      gap: $spacing-lg;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    .formulario-card form .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .categorias-section .tipo-section .categorias-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

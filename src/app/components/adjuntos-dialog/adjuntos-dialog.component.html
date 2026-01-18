@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>
+  <mat-icon>attach_file</mat-icon>
+  Archivos Adjuntos
+</h2>
+
+<mat-dialog-content>
+  @if (cargando) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <div class="upload-area">
+    <input 
+      type="file" 
+      #fileInput 
+      (change)="onFileSelected($event)" 
+      style="display: none"
+      accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+    <button mat-raised-button color="primary" (click)="fileInput.click()" [disabled]="subiendo">
+      <mat-icon>cloud_upload</mat-icon>
+      Subir Archivo
+    </button>
+    <small>Máximo 5MB - Imágenes, PDF, Word, Excel</small>
+  </div>
+
+  @if (subiendo) {
+    <div class="subiendo">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span>Subiendo archivo...</span>
+    </div>
+  }
+
+  <div class="adjuntos-lista">
+    @if (adjuntos.length === 0 && !cargando) {
+      <div class="no-adjuntos">
+        <mat-icon>folder_open</mat-icon>
+        <p>No hay archivos adjuntos</p>
+      </div>
+    }
+
+    @for (adjunto of adjuntos; track adjunto.id) {
+      <div class="adjunto-item">
+        <mat-icon class="icono-archivo">{{ getIconoArchivo(adjunto.nombreArchivo) }}</mat-icon>
+        <div class="adjunto-info">
+          <div class="nombre">{{ adjunto.nombreArchivo }}</div>
+          <div class="detalles">
+            <span class="tamano">{{ formatearTamano(adjunto.tamanoBytes) }}</span>
+            <span class="fecha">{{ adjunto.fechaSubida | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+        <div class="adjunto-actions">
+          <button mat-icon-button (click)="descargarAdjunto(adjunto)" matTooltip="Descargar">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarAdjunto(adjunto)" matTooltip="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

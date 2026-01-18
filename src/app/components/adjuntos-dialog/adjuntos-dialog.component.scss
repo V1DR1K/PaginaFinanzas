@@ -1,0 +1,193 @@
+@import '../../../assets/estilos/index';
+
+:host {
+  display: block;
+}
+
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  @include text-primary;
+
+  mat-icon {
+    :host-context(html.dark-theme) & {
+      color: $dark-accent;
+    }
+    
+    :host-context(:not(.dark-theme)) & {
+      color: $light-accent;
+    }
+  }
+}
+
+mat-dialog-content {
+  min-width: 500px;
+  max-height: 600px;
+  padding: $spacing-xl 0;
+
+  .upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-xl;
+    margin-bottom: $spacing-xl;
+    border-radius: $radius-md;
+    
+    :host-context(html.dark-theme) & {
+      border: 2px dashed rgba($dark-accent, 0.3);
+      background: rgba($dark-accent, 0.05);
+    }
+    
+    :host-context(:not(.dark-theme)) & {
+      border: 2px dashed rgba($light-accent, 0.3);
+      background: rgba($light-accent, 0.05);
+    }
+
+    button {
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+
+    small {
+      @include text-secondary;
+      font-size: 0.85rem;
+    }
+  }
+
+  .subiendo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+
+    span {
+      text-align: center;
+      @include text-secondary;
+      font-size: 0.9rem;
+    }
+  }
+
+  .adjuntos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .no-adjuntos {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-lg;
+      padding: $spacing-3xl $spacing-lg;
+      @include text-secondary;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    .adjunto-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
+      padding: $spacing-lg;
+      border-radius: $radius-md;
+      transition: all 0.3s ease;
+      
+      :host-context(html.dark-theme) & {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid $dark-border;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba($dark-accent, 0.3);
+        }
+      }
+      
+      :host-context(:not(.dark-theme)) & {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid $light-border;
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.04);
+          border-color: rgba($light-accent, 0.3);
+        }
+      }
+
+      .icono-archivo {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+        
+        :host-context(html.dark-theme) & {
+          color: $dark-accent;
+        }
+        
+        :host-context(:not(.dark-theme)) & {
+          color: $light-accent;
+        }
+      }
+
+      .adjunto-info {
+        flex: 1;
+        min-width: 0;
+
+        .nombre {
+          font-weight: 500;
+          @include text-primary;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: $spacing-xs;
+        }
+
+        .detalles {
+          display: flex;
+          gap: $spacing-lg;
+          font-size: 0.85rem;
+          @include text-secondary;
+
+          .tamano {
+            font-weight: 500;
+          }
+        }
+      }
+
+      .adjunto-actions {
+        display: flex;
+        gap: 0.25rem;
+
+        button {
+          width: 36px;
+          height: 36px;
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: $spacing-lg $spacing-xl;
+}
+
+@media (max-width: $breakpoint-tablet) {
+  mat-dialog-content {
+    min-width: auto;
+    width: 90vw;
+    max-width: 500px;
+  }
+}

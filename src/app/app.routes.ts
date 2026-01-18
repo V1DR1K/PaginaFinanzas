@@ -4,6 +4,9 @@ import { MovimientosComponent } from './components/movimientos/movimientos.compo
 import { InversionesComponent } from './components/inversiones/inversiones.component';
 import { LoginComponent } from './components/login/login.component';
 import { CambioContrasenaComponent } from './components/cambio-contrasena/cambio-contrasena.component';
+import { CategoriasComponent } from './components/categorias/categorias.component';
+import { RecurrentesComponent } from './components/recurrentes/recurrentes.component';
+import { InsightsComponent } from './components/insights/insights.component';
 import { authGuard, publicGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -30,6 +33,21 @@ export const routes: Routes = [
   {
     path: 'inversiones',
     component: InversionesComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'categorias',
+    component: CategoriasComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'recurrentes',
+    component: RecurrentesComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'insights',
+    component: InsightsComponent,
     canActivate: [authGuard],
   },
   {

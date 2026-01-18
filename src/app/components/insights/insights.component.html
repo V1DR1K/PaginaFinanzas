@@ -1,0 +1,123 @@
+<app-layout>
+  <div class="insights-container">
+    <div class="header">
+      <div>
+        <h1>Insights</h1>
+        <p class="subtitle">Análisis y recomendaciones personalizadas</p>
+      </div>
+      <button mat-raised-button (click)="cargarInsights()">
+        <mat-icon>refresh</mat-icon>
+        Actualizar
+      </button>
+    </div>
+
+    @if (cargando()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <!-- Resumen -->
+    <div class="resumen-cards">
+      <div class="resumen-card">
+        <mat-icon class="icon-insights">lightbulb</mat-icon>
+        <div class="resumen-info">
+          <div class="numero">{{ insights().length }}</div>
+          <div class="label">Insights totales</div>
+        </div>
+      </div>
+      <div class="resumen-card">
+        <mat-icon class="icon-nuevos">fiber_new</mat-icon>
+        <div class="resumen-info">
+          <div class="numero">{{ insightsNoLeidos }}</div>
+          <div class="label">Sin leer</div>
+        </div>
+      </div>
+      <div class="resumen-card">
+        <mat-icon class="icon-alertas">warning</mat-icon>
+        <div class="resumen-info">
+          <div class="numero">{{ gastosInusualesCount }}</div>
+          <div class="label">Gastos inusuales</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gastos Inusuales -->
+    @if (gastosInusuales().length > 0) {
+      <div class="seccion">
+        <h2 class="seccion-titulo">
+          <mat-icon>warning</mat-icon>
+          Gastos Inusuales Detectados
+        </h2>
+        <div class="gastos-grid">
+          @for (gasto of gastosInusuales(); track gasto.movimientoId) {
+            <div class="gasto-card alerta">
+              <div class="gasto-header">
+                <mat-icon>error_outline</mat-icon>
+                <span class="gasto-fecha">{{ formatearFecha(gasto.fecha) }}</span>
+              </div>
+              <div class="gasto-body">
+                <div class="gasto-descripcion">{{ gasto.descripcion }}</div>
+                <div class="gasto-cantidad">${{ gasto.cantidadActual | number:'1.2-2' }}</div>
+                <div class="gasto-comparacion">
+                  <div class="comparacion-item">
+                    <span class="label">Promedio:</span>
+                    <span class="valor">${{ gasto.promedioHistorico | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="comparacion-item">
+                    <span class="label">Desviación:</span>
+                    <span class="valor porcentaje">+{{ gasto.porcentajeDesviacion | number:'1.0-0' }}%</span>
+                  </div>
+                </div>
+                <div class="gasto-motivo">{{ gasto.motivoAlerta }}</div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Insights -->
+    <div class="seccion">
+      <h2 class="seccion-titulo">
+        <mat-icon>auto_awesome</mat-icon>
+        Insights y Recomendaciones
+      </h2>
+      @if (insights().length === 0) {
+        <div class="no-data">
+          <mat-icon>analytics</mat-icon>
+          <p>No hay insights disponibles</p>
+          <small>Los insights se generan automáticamente basados en tu historial de movimientos</small>
+        </div>
+      } @else {
+        <div class="insights-grid">
+          @for (insight of insights(); track insight.id) {
+            <div 
+              class="insight-card" 
+              [class.no-leido]="!insight.leido"
+              (click)="marcarComoLeido(insight)">
+              <div class="insight-header">
+                <mat-icon [style.color]="prioridadColors[insight.prioridad]">
+                  {{ tipoIconos[insight.tipo] || 'info' }}
+                </mat-icon>
+                <mat-chip [style.background]="prioridadColors[insight.prioridad] + '33'" 
+                          [style.color]="prioridadColors[insight.prioridad]">
+                  {{ insight.prioridad }}
+                </mat-chip>
+              </div>
+              <div class="insight-body">
+                <h3>{{ insight.titulo }}</h3>
+                <p>{{ insight.descripcion }}</p>
+                @if (!insight.leido) {
+                  <div class="badge-nuevo">Nuevo</div>
+                }
+              </div>
+              <div class="insight-footer">
+                <span class="tipo-badge">{{ insight.tipo }}</span>
+                <span class="fecha">{{ formatearFecha(insight.fechaGeneracion) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</app-layout>

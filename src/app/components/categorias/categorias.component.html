@@ -1,0 +1,162 @@
+<app-layout>
+  <div class="categorias-container">
+    <div class="header">
+      <h1>Categorías</h1>
+      <button mat-raised-button (click)="nuevaCategoria()">
+        <mat-icon>add</mat-icon>
+        Nueva Categoría
+      </button>
+    </div>
+
+    <!-- Formulario -->
+    @if (mostrandoFormulario()) {
+      <div class="formulario-card">
+        <h2>{{ editando() ? 'Editar' : 'Nueva' }} Categoría</h2>
+        <form [formGroup]="categoriaForm" (ngSubmit)="guardar()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Nombre</mat-label>
+              <input matInput formControlName="nombre" placeholder="Ej: Supermercado">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo</mat-label>
+              <mat-select formControlName="tipo">
+                <mat-option value="ingreso">Ingreso</mat-option>
+                <mat-option value="egreso">Egreso</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Ícono</mat-label>
+              <mat-select formControlName="icono">
+                @for (icono of iconos; track icono) {
+                  <mat-option [value]="icono">
+                    <mat-icon>{{ icono }}</mat-icon>
+                    {{ icono }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Categoría padre (opcional)</mat-label>
+              <mat-select formControlName="categoriaPadreId">
+                <mat-option [value]="null">Sin categoría padre</mat-option>
+                @for (cat of categoriasParaSubcategoria; track cat.id) {
+                  <mat-option [value]="cat.id">{{ cat.nombre }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="color-picker">
+            <label>Color:</label>
+            <div class="colores">
+              @for (color of colores; track color) {
+                <div 
+                  class="color-item" 
+                  [style.background]="color"
+                  [class.selected]="categoriaForm.get('color')?.value === color"
+                  (click)="categoriaForm.patchValue({ color: color })">
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit">
+              {{ editando() ? 'Actualizar' : 'Crear' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Lista de Categorías -->
+    <div class="categorias-section">
+      <div class="tipo-section">
+        <h2 class="tipo-titulo ingreso">
+          <mat-icon>arrow_upward</mat-icon>
+          Ingresos
+        </h2>
+        <div class="categorias-grid">
+          @for (categoria of categoriasIngresos(); track categoria.id) {
+            <div class="categoria-card" [style.border-left]="'4px solid ' + categoria.color">
+              <div class="categoria-header">
+                <div class="categoria-info">
+                  <mat-icon [style.color]="categoria.color">{{ categoria.icono }}</mat-icon>
+                  <span class="categoria-nombre">{{ categoria.nombre }}</span>
+                </div>
+                <div class="categoria-actions">
+                  <button mat-icon-button (click)="editarCategoria(categoria)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="eliminarCategoria(categoria)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+              @if (categoria.subcategorias && categoria.subcategorias.length > 0) {
+                <div class="subcategorias">
+                  @for (sub of categoria.subcategorias; track sub.id) {
+                    <div class="subcategoria-item">
+                      <mat-icon [style.color]="sub.color">{{ sub.icono }}</mat-icon>
+                      <span>{{ sub.nombre }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+          @if (categoriasIngresos().length === 0) {
+            <p class="no-data">No hay categorías de ingresos</p>
+          }
+        </div>
+      </div>
+
+      <div class="tipo-section">
+        <h2 class="tipo-titulo egreso">
+          <mat-icon>arrow_downward</mat-icon>
+          Egresos
+        </h2>
+        <div class="categorias-grid">
+          @for (categoria of categoriasEgresos(); track categoria.id) {
+            <div class="categoria-card" [style.border-left]="'4px solid ' + categoria.color">
+              <div class="categoria-header">
+                <div class="categoria-info">
+                  <mat-icon [style.color]="categoria.color">{{ categoria.icono }}</mat-icon>
+                  <span class="categoria-nombre">{{ categoria.nombre }}</span>
+                </div>
+                <div class="categoria-actions">
+                  <button mat-icon-button (click)="editarCategoria(categoria)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="eliminarCategoria(categoria)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+              @if (categoria.subcategorias && categoria.subcategorias.length > 0) {
+                <div class="subcategorias">
+                  @for (sub of categoria.subcategorias; track sub.id) {
+                    <div class="subcategoria-item">
+                      <mat-icon [style.color]="sub.color">{{ sub.icono }}</mat-icon>
+                      <span>{{ sub.nombre }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+          @if (categoriasEgresos().length === 0) {
+            <p class="no-data">No hay categorías de egresos</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>
