@@ -16,6 +16,11 @@
     </div>
 
     <!-- Estadísticas Principales -->
+    <div class="stats-grid-header">
+      <button mat-icon-button (click)="mostrarValores.set(!mostrarValores())" matTooltip="Mostrar/Ocultar valores">
+        <mat-icon>{{ mostrarValores() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+    </div>
     <div class="stats-grid">
       <mat-card class="stat-card balance">
         <mat-card-content>
@@ -24,7 +29,13 @@
           </div>
           <div class="stat-info">
             <p class="stat-label">Balance Total</p>
-            <p class="stat-value">${{ balance() | number: '1.2-2' }}</p>
+            <p class="stat-value">
+              @if (mostrarValores()) {
+                ${{ balance() | number: '1.2-2' }}
+              } @else {
+                <span class="oculto">••••••</span>
+              }
+            </p>
           </div>
         </mat-card-content>
       </mat-card>
@@ -36,7 +47,13 @@
           </div>
           <div class="stat-info">
             <p class="stat-label">Total Ingresos</p>
-            <p class="stat-value">${{ totalIngresos() | number: '1.2-2' }}</p>
+            <p class="stat-value">
+              @if (mostrarValores()) {
+                ${{ totalIngresos() | number: '1.2-2' }}
+              } @else {
+                <span class="oculto">••••••</span>
+              }
+            </p>
           </div>
         </mat-card-content>
       </mat-card>
@@ -48,7 +65,13 @@
           </div>
           <div class="stat-info">
             <p class="stat-label">Total Egresos</p>
-            <p class="stat-value">${{ totalEgresos() | number: '1.2-2' }}</p>
+            <p class="stat-value">
+              @if (mostrarValores()) {
+                ${{ totalEgresos() | number: '1.2-2' }}
+              } @else {
+                <span class="oculto">••••••</span>
+              }
+            </p>
           </div>
         </mat-card-content>
       </mat-card>

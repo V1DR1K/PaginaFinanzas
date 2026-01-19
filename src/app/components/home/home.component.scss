@@ -29,10 +29,10 @@
 
 // Estadísticas principales
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: $spacing-lg;
-    margin-bottom: $spacing-3xl;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-lg;
+  margin-bottom: $spacing-3xl;
 
     .stat-card {
         @include glass-card;
@@ -179,6 +179,12 @@
             min-width: 0;
             max-width: 100%;
         }
+    }
+
+    &-header {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 8px;
     }
 }
 
@@ -387,6 +393,14 @@
         padding: $spacing-3xl;
         font-style: italic;
     }
+}
+
+// Valores ocultos
+.oculto {
+  letter-spacing: 2px;
+  color: $dark-text-secondary;
+  font-size: 1.75rem;
+  font-weight: 700;
 }
 
 // Responsive

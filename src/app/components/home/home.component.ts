@@ -47,6 +47,7 @@ export class HomeComponent implements OnInit {
   ultimosMovimientos = signal<Movimiento[]>([]);
   dolares = signal<DolarTipo[]>([]);
   dolarCargando = signal(false);
+  mostrarValores = signal(false);
 
   constructor(
     private router: Router,
