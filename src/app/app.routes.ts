@@ -8,6 +8,8 @@ import { CategoriasComponent } from './components/categorias/categorias.componen
 import { RecurrentesComponent } from './components/recurrentes/recurrentes.component';
 import { InsightsComponent } from './components/insights/insights.component';
 import { authGuard, publicGuard } from './guards/auth.guard';
+import { EventosRecordatorioComponent } from './components/eventos-recordatorio/eventos-recordatorio.component';
+import { TiposEventoComponent } from './components/tipos-evento/tipos-evento.component';
 
 export const routes: Routes = [
   {
@@ -48,6 +50,16 @@ export const routes: Routes = [
   {
     path: 'insights',
     component: InsightsComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'eventos',
+    component: EventosRecordatorioComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'tipos-evento',
+    component: TiposEventoComponent,
     canActivate: [authGuard],
   },
   {

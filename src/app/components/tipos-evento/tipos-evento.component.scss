@@ -1,0 +1,104 @@
+@import '../../../assets/estilos/index';
+
+
+.tipos-evento-panel {
+  @include glass-card;
+  padding: $spacing-2xl;
+  margin: 1rem 0;
+  transition: background 0.2s;
+  @include text-primary;
+
+  .h2 {
+    @include section-title;
+    margin-bottom: $spacing-xl;
+  }
+
+  .mat-card {
+    @include theme-aware(background, $dark-table-header-bg, $light-table-header-bg);
+    @include text-primary;
+  }
+
+  .mat-form-field {
+    @include theme-aware(background, $dark-input-bg, $light-input-bg);
+    @include text-primary;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(60,60,60,0.06);
+  }
+
+  .mat-form-field-label {
+    @include text-secondary;
+  }
+
+  .mat-input-element {
+    @include text-primary;
+  }
+}
+
+.tipo-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: $spacing-lg;
+  align-items: flex-end;
+  .mat-form-field {
+    min-width: 180px;
+    flex: 1 1 200px;
+  }
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
+  }
+  button[type="button"] {
+    color: $error-color !important;
+    background: transparent !important;
+    border: 1px solid $error-color !important;
+    &:hover {
+      background: $error-color !important;
+      color: #fff !important;
+    }
+  }
+}
+
+.tipos-lista {
+  margin-top: 1rem;
+}
+
+.tipo-item {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  @include theme-aware(background, $dark-table-header-bg, $light-table-header-bg);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+.tipo-nombre {
+  font-weight: bold;
+  min-width: 120px;
+  padding-right: 32px;
+  @include theme-aware(border-right, 1px solid $dark-border, 1px solid $light-border);
+  @include text-primary;
+}
+.tipo-desc {
+  flex: 1;
+  @include text-secondary;
+  min-width: 180px;
+  padding-left: 32px;
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .tipos-evento-panel {
+    padding: $spacing-md;
+  }
+  .tipo-form {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  .tipo-item .tipo-nombre, .tipo-item .tipo-desc {
+    font-size: 11px;
+    padding: 6px 4px;
+  }
+}

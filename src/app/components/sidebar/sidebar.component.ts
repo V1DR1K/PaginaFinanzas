@@ -31,6 +31,8 @@ export class SidebarComponent implements OnInit {
     { icon: 'trending_up', label: 'Inversiones', route: '/inversiones' },
     { icon: 'category', label: 'Categorías', route: '/categorias' },
     { icon: 'event_repeat', label: 'Recurrentes', route: '/recurrentes' },
+    { icon: 'event', label: 'Eventos', route: '/eventos' },
+    { icon: 'label', label: 'Tipos de Evento', route: '/tipos-evento' },
     { icon: 'auto_awesome', label: 'Insights', route: '/insights' },
   ];
 

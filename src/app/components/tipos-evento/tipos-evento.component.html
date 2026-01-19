@@ -1,0 +1,27 @@
+<app-layout>
+  <div class="home-container">
+    <div class="tipos-evento-panel" [ngClass]="theme">
+      <h2>Tipos de Evento</h2>
+      <form [formGroup]="tipoForm" (ngSubmit)="guardar()" class="tipo-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" required />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Descripción</mat-label>
+          <input matInput formControlName="descripcion" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Agregar</button>
+        <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+      </form>
+      <div class="tipos-lista">
+        <mat-card *ngFor="let tipo of tipos" [ngClass]="theme" class="tipo-item">
+          <mat-card-content>
+            <span class="tipo-nombre">{{ tipo.nombre }}</span>
+            <span class="tipo-desc">{{ tipo.descripcion }}</span>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</app-layout>

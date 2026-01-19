@@ -12,6 +12,8 @@ import { MovimientoRecurrenteService } from '../../services/movimiento-recurrent
 import { InsightService } from '../../services/insight.service';
 import { DolarService, DolarTipo } from '../../services/dolar.service';
 import { Movimiento } from '../../modelos/movimiento.model';
+import { EventosRecordatorioComponent } from '../eventos-recordatorio/eventos-recordatorio.component';
+// import { Evento } from '../../modelos/evento.model';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +25,7 @@ import { Movimiento } from '../../modelos/movimiento.model';
     MatCardModule,
     MatProgressBarModule,
     LayoutComponent,
+    EventosRecordatorioComponent,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -58,9 +61,11 @@ export class HomeComponent implements OnInit {
     private dolarService: DolarService
   ) {}
 
+
   ngOnInit(): void {
     this.cargarDashboard();
     this.cargarDolares();
+    // this.cargarEventosUsuario(); // Removed the call to cargarEventosUsuario
   }
 
   cargarDashboard(): void {
