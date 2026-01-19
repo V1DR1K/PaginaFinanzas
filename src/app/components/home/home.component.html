@@ -64,6 +64,33 @@
           </div>
         </mat-card-content>
       </mat-card>
+
+      <!-- Dólar Oficial, Blue y Tarjeta -->
+      <mat-card class="stat-card dolar">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>attach_money</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Cotización Dólar</p>
+            @if (dolarCargando()) {
+              <mat-progress-bar mode="indeterminate" color="accent" style="height: 4px;"></mat-progress-bar>
+            } @else if (dolares().length > 0) {
+              <div class="dolar-table">
+                @for (d of dolares(); track d.nombre) {
+                  <div class="dolar-row">
+                    <span class="dolar-nombre">{{ d.nombre }}</span>
+                    <span class="dolar-label">Compra:</span> <span class="dolar-valor">${{ d.compra | number: '1.2-2' }}</span>
+                    <span class="dolar-label">Venta:</span> <span class="dolar-valor">${{ d.venta | number: '1.2-2' }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="stat-value error">No disponible</p>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
 
     <!-- Secciones Rápidas -->

@@ -10,6 +10,7 @@ import { MovimientoService } from '../../services/movimiento.service';
 import { CategoriaService } from '../../services/categoria.service';
 import { MovimientoRecurrenteService } from '../../services/movimiento-recurrente.service';
 import { InsightService } from '../../services/insight.service';
+import { DolarService, DolarTipo } from '../../services/dolar.service';
 import { Movimiento } from '../../modelos/movimiento.model';
 
 @Component({
@@ -44,17 +45,21 @@ export class HomeComponent implements OnInit {
   
   // Últimos movimientos
   ultimosMovimientos = signal<Movimiento[]>([]);
+  dolares = signal<DolarTipo[]>([]);
+  dolarCargando = signal(false);
 
   constructor(
     private router: Router,
     private movimientoService: MovimientoService,
     private categoriaService: CategoriaService,
     private recurrenteService: MovimientoRecurrenteService,
-    private insightService: InsightService
+    private insightService: InsightService,
+    private dolarService: DolarService
   ) {}
 
   ngOnInit(): void {
     this.cargarDashboard();
+    this.cargarDolares();
   }
 
   cargarDashboard(): void {
@@ -99,6 +104,17 @@ export class HomeComponent implements OnInit {
         this.totalInsights.set(response.insights.length);
         this.insightsNoLeidos.set(response.insights.filter(i => !i.leido).length);
       }
+    });
+  }
+
+  cargarDolares(): void {
+    this.dolarCargando.set(true);
+    this.dolarService.getDolares().subscribe({
+      next: (d) => {
+        this.dolares.set(d);
+        this.dolarCargando.set(false);
+      },
+      error: () => this.dolarCargando.set(false)
     });
   }
 
