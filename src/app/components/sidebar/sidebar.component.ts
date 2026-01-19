@@ -74,7 +74,18 @@ export class SidebarComponent implements OnInit {
   }
 
   toggleUserMenu() {
-    this.showUserMenu.update(v => !v);
+    // Si está minimizado, primero expandir el sidebar
+    if (this.minimizado) {
+      this.minimizado = false;
+      this.minimizadoChange.emit(this.minimizado);
+      // Esperar un momento para que se expanda antes de abrir el menú
+      setTimeout(() => {
+        this.showUserMenu.set(true);
+      }, 200);
+    } else {
+      // Si ya está expandido, toggle normal
+      this.showUserMenu.update(v => !v);
+    }
   }
 
   cambiarContrasena() {
