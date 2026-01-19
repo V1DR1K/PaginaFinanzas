@@ -33,9 +33,36 @@
     display: flex;
     align-items: center;
     gap: $spacing-sm;
+    flex-wrap: wrap;
 
     mat-chip {
         font-weight: 500;
+        font-size: 11px;
+        padding: 4px 8px !important;
+        height: auto !important;
+        min-height: 32px;
+
+        ::ng-deep .mdc-evolution-chip__cell--primary {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        ::ng-deep .mdc-evolution-chip__action--primary {
+            padding: 0 !important;
+        }
+
+        mat-icon {
+            font-size: 16px !important;
+            width: 16px !important;
+            height: 16px !important;
+            margin: 0 !important;
+        }
+
+        .chip-text {
+            line-height: 1;
+            white-space: nowrap;
+        }
 
         :host-context(html.dark-theme) & {
             color: white !important;
@@ -173,21 +200,27 @@
 }
 
 .holding-actions {
+    position: absolute;
+    top: 4px;
+    right: 4px;
     display: flex;
-    gap: 4px;
+    flex-direction: column;
+    gap: 2px;
     opacity: 0;
     transition: opacity 0.2s ease;
-    margin-top: 4px;
 
     button {
-        width: 28px;
-        height: 28px;
-        line-height: 28px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
 
         mat-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
         }
     }
 }

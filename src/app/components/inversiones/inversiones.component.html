@@ -15,7 +15,7 @@
           <mat-chip [color]="connectionStatus === 'connected' ? 'primary' : 'warn'" selected>
             <mat-icon>{{ connectionStatus === 'connected' ? 'cloud_done' : (connectionStatus === 'connecting' ? 'sync' : 'cloud_off') }}</mat-icon>
             <span class="chip-text">
-              {{ connectionStatus === 'connected' ? 'Conectado' : connectionStatus === 'connecting' ? 'Conectando' : 'Desconectado' }}
+              {{ connectionStatus === 'connected' ? 'Bitget · Conectado' : connectionStatus === 'connecting' ? 'Bitget · Conectando' : 'Bitget · Desconectado' }}
             </span>
           </mat-chip>
           <mat-chip [color]="binanceStatus === 'connected' ? 'primary' : 'warn'" selected>
@@ -127,11 +127,6 @@
                 <div class="holding-actions">
                   <button mat-icon-button (click)="editarTenencia(holding)" matTooltip="Editar">
                     <mat-icon>edit</mat-icon>
-                  </button>
-                  <button mat-icon-button (click)="toggleActivoTenencia(holding)" 
-                          [matTooltip]="holding.activo ? 'Desactivar' : 'Activar'"
-                          [color]="holding.activo ? 'primary' : 'warn'">
-                    <mat-icon>{{ holding.activo ? 'visibility' : 'visibility_off' }}</mat-icon>
                   </button>
                   <button mat-icon-button (click)="eliminarTenencia(holding)" color="warn" matTooltip="Eliminar">
                     <mat-icon>delete</mat-icon>
