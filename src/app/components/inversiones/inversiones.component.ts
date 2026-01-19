@@ -1,15 +1,24 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSortModule } from '@angular/material/sort';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { LayoutComponent } from '../layout/layout.component';
 import { BitgetSubscribeRequest, BitgetTickerUpdate, BitgetWsService, WsConnectionStatus } from '../../services/bitget-ws.service';
 import { BinanceWsService, BinanceTickerUpdate, BinanceWsStatus } from '../../services/binance-ws.service';
+import { CryptoService } from '../../services/crypto.service';
+import { Crypto, CryptoSymbol } from '../../modelos/crypto.model';
 
 interface TokenRow {
   instId: string;
@@ -35,7 +44,23 @@ interface TokenHolding {
 @Component({
   selector: 'app-inversiones',
   standalone: true,
-  imports: [CommonModule, LayoutComponent, MatCardModule, MatTableModule, MatChipsModule, MatIconModule, MatSortModule, MatProgressBarModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LayoutComponent,
+    MatCardModule,
+    MatTableModule,
+    MatChipsModule,
+    MatIconModule,
+    MatSortModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule
+  ],
   templateUrl: './inversiones.component.html',
   styleUrls: ['./inversiones.component.scss'],
 })
@@ -43,35 +68,20 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('negativeCarousel') negativeCarousel?: ElementRef<HTMLDivElement>;
   @ViewChild('positiveCarousel') positiveCarousel?: ElementRef<HTMLDivElement>;
 
-  readonly tokens: TokenRow[] = [
-    { instId: 'BTCUSDT', display: 'BTC / USDT' },
-    { instId: 'ETHUSDT', display: 'ETH / USDT' },
-    { instId: 'SOLUSDT', display: 'SOL / USDT' },
-    { instId: 'PEPEUSDT', display: '1000PEPE / USDT' },
-    { instId: 'BGBUSDT', display: 'BGB / USDT' },
-    { instId: 'THETAUSDT', display: 'THETA / USDT', source: 'binance' },
-    { instId: 'AVAXUSDT', display: 'AVAX / USDT' },
-    { instId: 'RONINUSDT', display: 'RONIN / USDT', source: 'binance' },
-    { instId: 'BANANAUSDT', display: 'BANANA / USDT' },
-    { instId: 'FILUSDT', display: 'FIL / USDT' },
-    { instId: 'ADAUSDT', display: 'ADA / USDT' },
-    { instId: 'HBARUSDT', display: 'HBAR / USDT' },
-    { instId: 'BTCEUR', display: 'BTC / EUR' },
-  ];
-
-  // Tenencias actuales hardcodeadas
-  readonly holdings: TokenHolding[] = [
-    { instId: 'ETHUSDT', symbol: 'ETH', amount: 0.4889803, percentage: 43.10 },
-    { instId: 'SOLUSDT', symbol: 'SOL', amount: 5.51308848, percentage: 21.16 },
-    { instId: 'PEPEUSDT', symbol: 'PEPE', amount: 66392802.517, percentage: 10.35 },
-    { instId: 'BGBUSDT', symbol: 'BGB', amount: 86.8479651, percentage: 8.74 },
-    { instId: 'AVAXUSDT', symbol: 'AVAX', amount: 15.7641201, percentage: 5.79 },
-    { instId: 'FILUSDT', symbol: 'FIL', amount: 108.2227, percentage: 4.47 },
-    { instId: 'ADAUSDT', symbol: 'ADA', amount: 329.751918, percentage: 3.49 },
-    { instId: 'BANANAUSDT', symbol: 'BANANA', amount: 7.63236, percentage: 1.49 },
-    { instId: 'RONINUSDT', symbol: 'RON', amount: 286.87335, percentage: 1.35 },
-    { instId: 'THETAUSDT', symbol: 'THETA', amount: 277.3742, percentage: 0 },
-  ];
+  // Datos dinámicos
+  simbolos: CryptoSymbol[] = [];
+  holdings = signal<Crypto[]>([]);
+  
+  // UI States
+  mostrandoFormTenencia = signal(false);
+  mostrandoFormSimbolo = signal(false);
+  editandoTenencia = signal(false);
+  editandoSimbolo = signal(false);
+  
+  // Forms
+  tenenciaForm: FormGroup;
+  simboloForm: FormGroup;
+  tenenciaSeleccionada: Crypto | null = null;
 
   rows: TokenRow[] = [];
   connectionStatus: WsConnectionStatus = 'disconnected';
@@ -87,15 +97,74 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   displayedColumns = ['pair', 'last', 'changePct', 'bidAsk', 'range', 'time'];
 
-  constructor(private wsService: BitgetWsService, private binanceWs: BinanceWsService) {}
+  constructor(
+    private wsService: BitgetWsService,
+    private binanceWs: BinanceWsService,
+    private cryptoService: CryptoService,
+    private fb: FormBuilder,
+    private toastr: ToastrService
+  ) {
+    this.tenenciaForm = this.fb.group({
+      instId: ['', Validators.required],
+      symbol: ['', Validators.required],
+      amount: ['', [Validators.required, Validators.min(0.00000001)]],
+      percentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+      source: ['bitget'],
+      display: [''],
+      activo: [true]
+    });
+
+    this.simboloForm = this.fb.group({
+      instId: ['', Validators.required],
+      display: ['', Validators.required],
+      source: ['bitget']
+    });
+  }
 
   ngOnInit(): void {
-    // Initialize rows to preserve order
-    this.rows = this.tokens.map((t) => ({ ...t }));
+    this.cargarDatos();
+  }
 
-    const bitgetSubs: BitgetSubscribeRequest[] = this.tokens
-      .filter((t) => t.source !== 'binance')
-      .map((t) => ({ instId: t.instId, instType: t.instType }));
+  cargarDatos(): void {
+    this.cargando = true;
+
+    // Cargar símbolos
+    this.cryptoService.getSymbolos().subscribe({
+      next: (simbolos) => {
+        this.simbolos = simbolos;
+        this.initializeWebSockets();
+      },
+      error: (error) => {
+        console.error('Error al cargar símbolos:', error);
+        this.toastr.error('Error al cargar los símbolos', 'Error');
+        this.cargando = false;
+      }
+    });
+
+    // Cargar tenencias
+    this.cryptoService.getCryptosActivas().subscribe({
+      next: (cryptos) => {
+        this.holdings.set(cryptos);
+      },
+      error: (error) => {
+        console.error('Error al cargar tenencias:', error);
+        this.toastr.error('Error al cargar las tenencias', 'Error');
+      }
+    });
+  }
+
+  initializeWebSockets(): void {
+    // Initialize rows
+    this.rows = this.simbolos.map((s) => ({
+      instId: s.instId,
+      display: s.display,
+      source: s.source
+    }));
+
+    // Subscribe to Bitget tickers
+    const bitgetSubs: BitgetSubscribeRequest[] = this.simbolos
+      .filter((s) => s.source !== 'binance')
+      .map((s) => ({ instId: s.instId }));
 
     if (bitgetSubs.length) {
       this.tickerSub = this.wsService.subscribeTickers(bitgetSubs).subscribe((update) => {
@@ -107,7 +176,11 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
 
-    const binancePairs = this.tokens.filter((t) => t.source === 'binance').map((t) => t.instId);
+    // Subscribe to Binance tickers
+    const binancePairs = this.simbolos
+      .filter((s) => s.source === 'binance')
+      .map((s) => s.instId);
+
     if (binancePairs.length) {
       this.binanceTickerSub = this.binanceWs.subscribeTickers(binancePairs).subscribe((update) => {
         this.applyBinanceUpdate(update);
@@ -219,10 +292,9 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get totalBalance(): number {
-    return this.holdings.reduce((total, holding) => {
+    return this.holdings().reduce((total, holding) => {
       const tokenRow = this.rows.find(r => r.instId === holding.instId);
       if (tokenRow && tokenRow.last) {
-        // Para PEPE, el precio es por 1000 tokens
         const price = holding.instId === 'PEPEUSDT' ? tokenRow.last / 1000 : tokenRow.last;
         return total + (holding.amount * price);
       }
@@ -231,18 +303,123 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getHoldingValue(instId: string): number {
-    const holding = this.holdings.find(h => h.instId === instId);
+    const holding = this.holdings().find(h => h.instId === instId);
     const tokenRow = this.rows.find(r => r.instId === instId);
     
     if (!holding || !tokenRow || !tokenRow.last) return 0;
     
-    // Para PEPE, el precio es por 1000 tokens
     const price = instId === 'PEPEUSDT' ? tokenRow.last / 1000 : tokenRow.last;
     return holding.amount * price;
   }
 
   getHoldingAmount(instId: string): number {
-    const holding = this.holdings.find(h => h.instId === instId);
+    const holding = this.holdings().find(h => h.instId === instId);
     return holding?.amount || 0;
+  }
+
+  // ===== CRUD TENENCIAS =====
+  
+  nuevaTenencia(): void {
+    this.editandoTenencia.set(false);
+    this.tenenciaSeleccionada = null;
+    this.tenenciaForm.reset({
+      source: 'bitget',
+      activo: true
+    });
+    this.mostrandoFormTenencia.set(true);
+  }
+
+  editarTenencia(crypto: Crypto): void {
+    this.editandoTenencia.set(true);
+    this.tenenciaSeleccionada = crypto;
+    this.tenenciaForm.patchValue({
+      instId: crypto.instId,
+      symbol: crypto.symbol,
+      amount: crypto.amount,
+      percentage: crypto.percentage,
+      source: crypto.source || 'bitget',
+      display: crypto.display,
+      activo: crypto.activo
+    });
+    this.mostrandoFormTenencia.set(true);
+  }
+
+  guardarTenencia(): void {
+    if (this.tenenciaForm.invalid) {
+      this.toastr.warning('Por favor completa todos los campos', 'Formulario inválido');
+      return;
+    }
+
+    const request = this.tenenciaForm.value;
+
+    if (this.editandoTenencia() && this.tenenciaSeleccionada) {
+      this.cryptoService.updateCrypto(this.tenenciaSeleccionada.id, request).subscribe({
+        next: () => {
+          this.toastr.success('Tenencia actualizada correctamente', 'Éxito');
+          this.cancelarFormTenencia();
+          this.cargarDatos();
+        },
+        error: (error) => {
+          console.error('Error al actualizar tenencia:', error);
+          this.toastr.error('Error al actualizar la tenencia', 'Error');
+        }
+      });
+    } else {
+      this.cryptoService.createCrypto(request).subscribe({
+        next: () => {
+          this.toastr.success('Tenencia creada correctamente', 'Éxito');
+          this.cancelarFormTenencia();
+          this.cargarDatos();
+        },
+        error: (error) => {
+          console.error('Error al crear tenencia:', error);
+          this.toastr.error('Error al crear la tenencia', 'Error');
+        }
+      });
+    }
+  }
+
+  eliminarTenencia(crypto: Crypto): void {
+    if (!confirm(`¿Eliminar la tenencia de ${crypto.symbol}?`)) return;
+
+    this.cryptoService.deleteCrypto(crypto.id).subscribe({
+      next: () => {
+        this.toastr.success('Tenencia eliminada correctamente', 'Éxito');
+        this.cargarDatos();
+      },
+      error: (error) => {
+        console.error('Error al eliminar tenencia:', error);
+        this.toastr.error('Error al eliminar la tenencia', 'Error');
+      }
+    });
+  }
+
+  toggleActivoTenencia(crypto: Crypto): void {
+    this.cryptoService.toggleActivo(crypto.id).subscribe({
+      next: () => {
+        this.toastr.success(
+          crypto.activo ? 'Tenencia desactivada' : 'Tenencia activada',
+          'Éxito'
+        );
+        this.cargarDatos();
+      },
+      error: (error) => {
+        console.error('Error al cambiar estado:', error);
+        this.toastr.error('Error al cambiar el estado', 'Error');
+      }
+    });
+  }
+
+  cancelarFormTenencia(): void {
+    this.mostrandoFormTenencia.set(false);
+    this.editandoTenencia.set(false);
+    this.tenenciaSeleccionada = null;
+    this.tenenciaForm.reset();
+  }
+
+  cancelarFormSimbolo(): void {
+    this.mostrandoFormSimbolo.set(false);
+    this.editandoSimbolo.set(false);
+    this.simboloForm.reset();
   }
 }

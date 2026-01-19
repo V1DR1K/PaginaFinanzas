@@ -25,8 +25,74 @@
             </span>
           </mat-chip>
         </mat-chip-set>
+        <button mat-raised-button color="primary" (click)="nuevaTenencia()" style="margin-left: 16px;">
+          <mat-icon>add</mat-icon>
+          Nueva Tenencia
+        </button>
       </div>
     </div>
+
+    <!-- Formulario de Tenencia -->
+    @if (mostrandoFormTenencia()) {
+      <mat-card class="form-card">
+        <mat-card-header>
+          <mat-card-title>{{ editandoTenencia() ? 'Editar Tenencia' : 'Nueva Tenencia' }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="tenenciaForm" (ngSubmit)="guardarTenencia()">
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Símbolo (InstId)</mat-label>
+                <mat-select formControlName="instId" required>
+                  @for (simbolo of simbolos; track simbolo.instId) {
+                    <mat-option [value]="simbolo.instId">
+                      {{ simbolo.display }} ({{ simbolo.instId }})
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Símbolo Display</mat-label>
+                <input matInput formControlName="symbol" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Cantidad</mat-label>
+                <input matInput type="number" formControlName="amount" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Porcentaje (%)</mat-label>
+                <input matInput type="number" formControlName="percentage">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Fuente</mat-label>
+                <mat-select formControlName="source" required>
+                  <mat-option value="bitget">Bitget</mat-option>
+                  <mat-option value="binance">Binance</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Nombre Display</mat-label>
+                <input matInput formControlName="display">
+              </mat-form-field>
+            </div>
+
+            <div class="form-actions">
+              <button mat-button type="button" (click)="cancelarFormTenencia()">
+                Cancelar
+              </button>
+              <button mat-raised-button color="primary" type="submit">
+                {{ editandoTenencia() ? 'Actualizar' : 'Guardar' }}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    }
 
     <!-- Balance Total -->
     <div class="balance-section">
@@ -49,15 +115,36 @@
         <mat-card-content>
           <h3 class="holdings-title">Tenencias</h3>
           <div class="holdings-list">
-            <div class="holding-item" *ngFor="let holding of holdings">
-              <div class="holding-info">
-                <div class="holding-symbol">{{ holding.symbol }}</div>
-                <div class="holding-amount">{{ formatNumber(holding.amount, 4) }}</div>
+            @for (holding of holdings(); track holding.id) {
+              <div class="holding-item">
+                <div class="holding-info">
+                  <div class="holding-symbol">{{ holding.symbol }}</div>
+                  <div class="holding-amount">{{ formatNumber(holding.amount, 4) }}</div>
+                </div>
+                <div class="holding-value">
+                  ${{ formatNumber(getHoldingValue(holding.instId), 2) }}
+                </div>
+                <div class="holding-actions">
+                  <button mat-icon-button (click)="editarTenencia(holding)" matTooltip="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="toggleActivoTenencia(holding)" 
+                          [matTooltip]="holding.activo ? 'Desactivar' : 'Activar'"
+                          [color]="holding.activo ? 'primary' : 'warn'">
+                    <mat-icon>{{ holding.activo ? 'visibility' : 'visibility_off' }}</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="eliminarTenencia(holding)" color="warn" matTooltip="Eliminar">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
               </div>
-              <div class="holding-value">
-                ${{ formatNumber(getHoldingValue(holding.instId), 2) }}
+            }
+            @if (holdings().length === 0) {
+              <div class="empty-state">
+                <mat-icon>info</mat-icon>
+                <p>No tienes tenencias registradas</p>
               </div>
-            </div>
+            }
           </div>
         </mat-card-content>
       </mat-card>
