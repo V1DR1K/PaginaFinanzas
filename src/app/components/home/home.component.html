@@ -1,25 +1,74 @@
 <app-layout>
   <div class="home-container">
     @if (cargando()) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
-    
+
     <div class="header">
       <div>
         <h1>Dashboard</h1>
         <p class="subtitle">Resumen general de tus finanzas</p>
       </div>
-      <button mat-raised-button (click)="cargarDashboard()">
-        <mat-icon>refresh</mat-icon>
-        Actualizar
-      </button>
+      <div class="iconos-subtitle">
+        <button mat-icon-button (click)="mostrarValores.set(!mostrarValores())" matTooltip="Mostrar/Ocultar valores">
+          <mat-icon>{{ mostrarValores() ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+        <button mat-raised-button (click)="cargarDashboard()">
+          <mat-icon>refresh</mat-icon>
+          Actualizar
+        </button>
+      </div>
+    </div>
+    <!-- Eventos y Recordatorios (resumido) -->
+    <div class="eventos-carrusel-section">
+      @if (eventosCargando()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      } @else if (eventos.length > 0) {
+      <div class="eventos-carrusel-wrapper">
+        <div class="eventos-carrusel" #eventosCarousel>
+          <!-- Render eventos twice for seamless infinite scroll -->
+          @for (evento of eventos; track evento) {
+          <mat-card class="evento-card">
+            <div class="evento-header">
+              <div class="evento-icon" [ngStyle]="{'background': getTipoColor(evento.tipoId)}">
+                <mat-icon>event</mat-icon>
+              </div>
+              <div class="evento-info">
+                <div class="evento-desc">{{ evento.descripcion }}</div>
+                <div class="evento-date">{{ evento.fecha | date:'dd/MM/yyyy' }}</div>
+                <span class="evento-tipo-badge" [ngStyle]="{'background': getTipoColor(evento.tipoId)}">
+                  {{ getTipoNombre(evento.tipoId) }}
+                </span>
+              </div>
+            </div>
+          </mat-card>
+          }
+          @for (evento of eventos; track evento) {
+          <mat-card class="evento-card">
+            <div class="evento-header">
+              <div class="evento-icon" [ngStyle]="{'background': getTipoColor(evento.tipoId)}">
+                <mat-icon>event</mat-icon>
+              </div>
+              <div class="evento-info">
+                <div class="evento-desc">{{ evento.descripcion }}</div>
+                <div class="evento-date">{{ evento.fecha | date:'dd/MM/yyyy' }}</div>
+                <span class="evento-tipo-badge" [ngStyle]="{'background': getTipoColor(evento.tipoId)}">
+                  {{ getTipoNombre(evento.tipoId) }}
+                </span>
+              </div>
+            </div>
+          </mat-card>
+          }
+        </div>
+      </div>
+      } @else {
+      <p class="no-data">No hay eventos próximos</p>
+      }
     </div>
 
     <!-- Estadísticas Principales -->
     <div class="stats-grid-header">
-      <button mat-icon-button (click)="mostrarValores.set(!mostrarValores())" matTooltip="Mostrar/Ocultar valores">
-        <mat-icon>{{ mostrarValores() ? 'visibility' : 'visibility_off' }}</mat-icon>
-      </button>
+
     </div>
     <div class="stats-grid">
       <mat-card class="stat-card balance">
@@ -31,9 +80,9 @@
             <p class="stat-label">Balance Total</p>
             <p class="stat-value">
               @if (mostrarValores()) {
-                ${{ balance() | number: '1.2-2' }}
+              ${{ balance() | number: '1.2-2' }}
               } @else {
-                <span class="oculto">••••••</span>
+              <span class="oculto">••••••</span>
               }
             </p>
           </div>
@@ -49,9 +98,9 @@
             <p class="stat-label">Total Ingresos</p>
             <p class="stat-value">
               @if (mostrarValores()) {
-                ${{ totalIngresos() | number: '1.2-2' }}
+              ${{ totalIngresos() | number: '1.2-2' }}
               } @else {
-                <span class="oculto">••••••</span>
+              <span class="oculto">••••••</span>
               }
             </p>
           </div>
@@ -67,9 +116,9 @@
             <p class="stat-label">Total Egresos</p>
             <p class="stat-value">
               @if (mostrarValores()) {
-                ${{ totalEgresos() | number: '1.2-2' }}
+              ${{ totalEgresos() | number: '1.2-2' }}
               } @else {
-                <span class="oculto">••••••</span>
+              <span class="oculto">••••••</span>
               }
             </p>
           </div>
@@ -97,19 +146,21 @@
           <div class="stat-info">
             <p class="stat-label">Cotización Dólar</p>
             @if (dolarCargando()) {
-              <mat-progress-bar mode="indeterminate" color="accent" style="height: 4px;"></mat-progress-bar>
+            <mat-progress-bar mode="indeterminate" color="accent" style="height: 4px;"></mat-progress-bar>
             } @else if (dolares().length > 0) {
-              <div class="dolar-table">
-                @for (d of dolares(); track d.nombre) {
-                  <div class="dolar-row">
-                    <span class="dolar-nombre">{{ d.nombre }}</span>
-                    <span class="dolar-label">Compra:</span> <span class="dolar-valor">${{ d.compra | number: '1.2-2' }}</span>
-                    <span class="dolar-label">Venta:</span> <span class="dolar-valor">${{ d.venta | number: '1.2-2' }}</span>
-                  </div>
-                }
+            <div class="dolar-table">
+              @for (d of dolares(); track d.nombre) {
+              <div class="dolar-row">
+                <span class="dolar-nombre">{{ d.nombre }}</span>
+                <span class="dolar-label">Compra:</span> <span class="dolar-valor">${{ d.compra | number: '1.2-2'
+                  }}</span>
+                <span class="dolar-label">Venta:</span> <span class="dolar-valor">${{ d.venta | number: '1.2-2'
+                  }}</span>
               </div>
+              }
+            </div>
             } @else {
-              <p class="stat-value error">No disponible</p>
+            <p class="stat-value error">No disponible</p>
             }
           </div>
         </mat-card-content>
@@ -221,7 +272,6 @@
         </mat-card>
       </div>
     </div>
-
     <!-- Últimos Movimientos -->
     <div class="recent-section">
       <div class="section-header">
@@ -231,32 +281,31 @@
           <mat-icon>arrow_forward</mat-icon>
         </button>
       </div>
-      
+
       @if (ultimosMovimientos().length > 0) {
-        <div class="recent-list">
-          @for (mov of ultimosMovimientos(); track mov.id) {
-            <mat-card class="recent-item">
-              <mat-card-content>
-                <div class="recent-icon" [class.ingreso]="mov.tipo === 'ingreso'" [class.egreso]="mov.tipo === 'egreso'">
-                  <mat-icon>{{ mov.tipo === 'ingreso' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-                </div>
-                <div class="recent-info">
-                  <p class="recent-desc">{{ mov.descripcion || 'Sin descripción' }}</p>
-                  <p class="recent-date">{{ mov.fecha }}</p>
-                </div>
-                <div class="recent-amount" [class.ingreso]="mov.tipo === 'ingreso'" [class.egreso]="mov.tipo === 'egreso'">
-                  {{ mov.tipo === 'ingreso' ? '+' : '-' }}${{ mov.cantidad | number: '1.2-2' }}
-                </div>
-              </mat-card-content>
-            </mat-card>
-          }
-        </div>
+      <div class="recent-list">
+        @for (mov of ultimosMovimientos(); track mov.id) {
+        <mat-card class="recent-item">
+          <mat-card-content>
+            <div class="recent-icon" [class.ingreso]="mov.tipo === 'ingreso'" [class.egreso]="mov.tipo === 'egreso'">
+              <mat-icon>{{ mov.tipo === 'ingreso' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </div>
+            <div class="recent-info">
+              <p class="recent-desc">{{ mov.descripcion || 'Sin descripción' }}</p>
+              <p class="recent-date">{{ mov.fecha }}</p>
+            </div>
+            <div class="recent-amount" [class.ingreso]="mov.tipo === 'ingreso'" [class.egreso]="mov.tipo === 'egreso'">
+              {{ mov.tipo === 'ingreso' ? '+' : '-' }}${{ mov.cantidad | number: '1.2-2' }}
+            </div>
+          </mat-card-content>
+        </mat-card>
+        }
+      </div>
       } @else {
-        <p class="no-data">No hay movimientos registrados</p>
+      <p class="no-data">No hay movimientos registrados</p>
       }
     </div>
 
-    <!-- Eventos y Recordatorios -->
-    <app-eventos-recordatorio></app-eventos-recordatorio>
+
   </div>
 </app-layout>

@@ -43,7 +43,7 @@ export class AdjuntosDialogComponent {
     this.cargando = true;
     this.adjuntoService.getAdjuntos(this.movimientoId).subscribe({
       next: (data) => {
-        this.adjuntos = data;
+        this.adjuntos = data ?? [];
         this.cargando = false;
       },
       error: (error) => {

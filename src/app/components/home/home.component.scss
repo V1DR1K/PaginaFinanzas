@@ -1,5 +1,81 @@
+// Carrusel de eventos y recordatorios
 // Estilos específicos del componente home
 @import '../../../assets/estilos/index';
+
+
+.eventos-carrusel-section {
+    margin-bottom: $spacing-2xl;
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-lg;
+
+        h2 {
+            @include section-title;
+            margin: 0;
+        }
+    }
+
+    .eventos-carrusel-wrapper {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .eventos-carrusel {
+        display: flex;
+        gap: $spacing-lg;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding: $spacing-sm $spacing-xs $spacing-lg $spacing-xs;
+        @include hide-scrollbar;
+    }
+
+    .evento-card {
+        min-width: 280px;
+        max-width: 280px;
+        flex-shrink: 0;
+        @include glass-card;
+        padding: $spacing-lg;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+
+    .evento-header {
+        display: flex;
+        gap: $spacing-md;
+        align-items: center;
+    }
+
+    .evento-icon {
+        @include token-icon;
+    }
+
+    .evento-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .evento-desc {
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .evento-date {
+        font-size: 12px;
+        opacity: 0.8;
+    }
+
+    .evento-tipo-badge {
+        @include badge;
+        margin-top: 4px;
+        font-size: 12px;
+    }
+}
+
 
 :host {
     display: block;
@@ -24,15 +100,24 @@
     .subtitle {
         @include text-secondary;
         margin-top: $spacing-xs;
+
+
+    }
+
+    .iconos-subtitle {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        justify-content: space-around;
     }
 }
 
 // Estadísticas principales
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $spacing-lg;
-  margin-bottom: $spacing-3xl;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-lg;
+    margin-bottom: $spacing-3xl;
 
     .stat-card {
         @include glass-card;
@@ -397,10 +482,10 @@
 
 // Valores ocultos
 .oculto {
-  letter-spacing: 2px;
-  color: $dark-text-secondary;
-  font-size: 1.75rem;
-  font-weight: 700;
+    letter-spacing: 2px;
+    color: $dark-text-secondary;
+    font-size: 1.75rem;
+    font-weight: 700;
 }
 
 // Responsive

@@ -1,4 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
+//
+import { Component, OnInit, signal, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +13,10 @@ import { MovimientoRecurrenteService } from '../../services/movimiento-recurrent
 import { InsightService } from '../../services/insight.service';
 import { DolarService, DolarTipo } from '../../services/dolar.service';
 import { Movimiento } from '../../modelos/movimiento.model';
-import { EventosRecordatorioComponent } from '../eventos-recordatorio/eventos-recordatorio.component';
+import { Evento } from '../../modelos/evento.model';
+import { TipoEvento } from '../../modelos/tipo-evento.model';
+import { EventoService } from '../../services/evento.service';
+import { TipoEventoService } from '../../services/tipo-evento.service';
 // import { Evento } from '../../modelos/evento.model';
 
 @Component({
@@ -25,12 +29,13 @@ import { EventosRecordatorioComponent } from '../eventos-recordatorio/eventos-re
     MatCardModule,
     MatProgressBarModule,
     LayoutComponent,
-    EventosRecordatorioComponent,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild('eventosCarousel') eventosCarousel?: ElementRef<HTMLDivElement>;
+    private eventosScrollInterval?: any;
   cargando = signal(false);
   
   // Estadísticas generales
@@ -52,20 +57,52 @@ export class HomeComponent implements OnInit {
   dolarCargando = signal(false);
   mostrarValores = signal(false);
 
+  eventos: Evento[] = [];
+  tipos: TipoEvento[] = [];
+  eventosCargando = signal(false);
+
   constructor(
     private router: Router,
     private movimientoService: MovimientoService,
     private categoriaService: CategoriaService,
     private recurrenteService: MovimientoRecurrenteService,
     private insightService: InsightService,
-    private dolarService: DolarService
+    private dolarService: DolarService,
+    private eventoService: EventoService,
+    private tipoEventoService: TipoEventoService
   ) {}
 
 
-  ngOnInit(): void {
-    this.cargarDashboard();
-    this.cargarDolares();
-    // this.cargarEventosUsuario(); // Removed the call to cargarEventosUsuario
+  // ngOnInit duplicado eliminado, ya está definido correctamente arriba
+
+  cargarEventos(): void {
+    this.eventosCargando.set(true);
+    this.eventoService.getEventos().subscribe({
+      next: (eventos) => {
+        this.eventos = eventos.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+        this.eventosCargando.set(false);
+      },
+      error: () => this.eventosCargando.set(false)
+    });
+  }
+
+  cargarTiposEvento(): void {
+    this.tipoEventoService.getTipos().subscribe({
+      next: (tipos) => this.tipos = tipos
+    });
+  }
+
+  getTipoNombre(tipoId?: string): string {
+    return this.tipos.find(t => t.id === tipoId)?.nombre || '';
+  }
+
+  getTipoColor(tipoId?: string): string {
+    const tipo = this.tipos.find(t => t.id === tipoId);
+    if (!tipo) return '#bdbdbd';
+    const colors = ['#60a5fa','#34d399','#fbbf24','#f87171','#a78bfa','#f472b6','#fb7185','#facc15','#38bdf8','#818cf8'];
+    let hash = 0;
+    for (let i = 0; i < tipo.nombre.length; i++) hash = tipo.nombre.charCodeAt(i) + ((hash << 5) - hash);
+    return colors[Math.abs(hash) % colors.length];
   }
 
   cargarDashboard(): void {
@@ -111,6 +148,48 @@ export class HomeComponent implements OnInit {
         this.insightsNoLeidos.set(response.insights.filter(i => !i.leido).length);
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.cargarDashboard();
+    this.cargarDolares();
+    this.cargarEventos();
+    this.cargarTiposEvento();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.startEventosAutoScroll();
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    this.stopEventosAutoScroll();
+  }
+
+  startEventosAutoScroll(): void {
+    // Each card is 280px + gap (16px default from $spacing-lg)
+    const cardWidth = 280 + 16;
+    this.eventosScrollInterval = setInterval(() => {
+      if (this.eventosCarousel) {
+        const container = this.eventosCarousel.nativeElement;
+        // Only scroll if there are enough eventos
+        if (this.eventos.length === 0) return;
+        // Total width of one set
+        const totalSetWidth = cardWidth * this.eventos.length;
+        // If we've scrolled past the first set, reset seamlessly
+        if (container.scrollLeft >= totalSetWidth) {
+          container.scrollLeft = container.scrollLeft - totalSetWidth;
+        }
+        container.scrollLeft += cardWidth;
+      }
+    }, 3000);
+  }
+
+  stopEventosAutoScroll(): void {
+    if (this.eventosScrollInterval) {
+      clearInterval(this.eventosScrollInterval);
+    }
   }
 
   cargarDolares(): void {

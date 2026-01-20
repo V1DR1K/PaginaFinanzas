@@ -11,10 +11,10 @@ export class TipoEventoService {
   constructor(private http: HttpClient) {}
 
   getTipos(): Observable<TipoEvento[]> {
-    return this.http.get<TipoEvento[]>(this.apiUrl);
+    return this.http.get<TipoEvento[]>(`${this.apiUrl}/getTipos`);
   }
 
   crearTipo(tipo: TipoEvento): Observable<TipoEvento> {
-    return this.http.post<TipoEvento>(this.apiUrl, tipo);
+    return this.http.post<TipoEvento>(`${this.apiUrl}/addTipos`, tipo);
   }
 }

@@ -11,10 +11,10 @@ export class EventoService {
   constructor(private http: HttpClient) {}
 
   getEventos(): Observable<Evento[]> {
-    return this.http.get<Evento[]>(this.apiUrl);
+    return this.http.get<Evento[]>(`${this.apiUrl}/getEventos`);
   }
 
   crearEvento(evento: Evento): Observable<Evento> {
-    return this.http.post<Evento>(this.apiUrl, evento);
+    return this.http.post<Evento>(`${this.apiUrl}/addEventos`, evento);
   }
 }

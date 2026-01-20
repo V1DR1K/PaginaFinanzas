@@ -44,14 +44,9 @@ export class AuthService {
     const savedToken = sessionStorage.getItem('token');
     const savedUser = sessionStorage.getItem('user');
     
-    console.log('AuthService constructor - savedToken:', savedToken ? 'exists' : 'null', 'savedUser:', savedUser);
-    
     if (savedToken && savedUser) {
       this.token = savedToken;
       this.setAuthState(true, savedUser);
-      console.log('Estado restaurado desde sessionStorage');
-    } else {
-      console.log('No hay sesión guardada');
     }
   }
 
@@ -108,12 +103,10 @@ export class AuthService {
    * Establece el estado de autenticación
    */
   private setAuthState(isLoggedIn: boolean, usuario: string | null): void {
-    console.log('setAuthState llamado - isLoggedIn:', isLoggedIn, 'usuario:', usuario);
     this.loggedIn.set(isLoggedIn);
     this.currentUser.set(usuario);
     this.isLoggedIn$.next(isLoggedIn);
     this.currentUser$.next(usuario);
-    console.log('BehaviorSubjects actualizados');
   }
 
   /**
