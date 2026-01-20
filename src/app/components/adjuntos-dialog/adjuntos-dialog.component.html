@@ -4,9 +4,7 @@
 </h2>
 
 <mat-dialog-content>
-  @if (cargando) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  }
+  <mat-progress-bar *ngIf="cargando" mode="indeterminate"></mat-progress-bar>
 
   <div class="upload-area">
     <input 
@@ -22,32 +20,29 @@
     <small>Máximo 5MB - Imágenes, PDF, Word, Excel</small>
   </div>
 
-  @if (subiendo) {
-    <div class="subiendo">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <span>Subiendo archivo...</span>
-    </div>
-  }
+  <div class="subiendo" *ngIf="subiendo">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span>Subiendo archivo...</span>
+  </div>
 
   <div class="adjuntos-lista">
-    @if (adjuntos.length === 0 && !cargando) {
-      <div class="no-adjuntos">
-        <mat-icon>folder_open</mat-icon>
-        <p>No hay archivos adjuntos</p>
-      </div>
-    }
+    <div class="no-adjuntos" *ngIf="adjuntos.length === 0 && !cargando">
+      <mat-icon>folder_open</mat-icon>
+      <p>No hay archivos adjuntos</p>
+    </div>
 
-    @for (adjunto of adjuntos; track adjunto.id) {
-      <div class="adjunto-item">
-        <mat-icon class="icono-archivo">{{ getIconoArchivo(adjunto.nombreArchivo) }}</mat-icon>
-        <div class="adjunto-info">
-          <div class="nombre">{{ adjunto.nombreArchivo }}</div>
-          <div class="detalles">
-            <span class="tamano">{{ formatearTamano(adjunto.tamanoBytes) }}</span>
-            <span class="fecha">{{ adjunto.fechaSubida | date:'dd/MM/yyyy HH:mm' }}</span>
-          </div>
+    <div *ngFor="let adjunto of adjuntos; trackBy: trackAdjunto" class="adjunto-item">
+      <!-- Si es imagen, renderiza miniatura -->
+      <img *ngIf="adjunto.tipoArchivo && adjunto.tipoArchivo.startsWith('image')" [src]="'data:' + adjunto.tipoArchivo + ';base64,' + adjunto.base64" alt="Miniatura" class="miniatura" width="48" height="48" />
+      <mat-icon *ngIf="!adjunto.tipoArchivo || !adjunto.tipoArchivo.startsWith('image')" class="icono-archivo">{{ getIconoArchivo(adjunto.nombreArchivo) }}</mat-icon>
+      <div class="adjunto-info">
+        <div class="nombre">{{ adjunto.nombreArchivo }}</div>
+        <div class="detalles">
+          <span class="tamano">{{ formatearTamano(adjunto.tamano) }}</span>
+          <span class="fecha">{{ adjunto.fechaSubida | date:'dd/MM/yyyy HH:mm' }}</span>
         </div>
-        <div class="adjunto-actions">
+      </div>
+      <div class="adjunto-actions">
           <button mat-icon-button (click)="descargarAdjunto(adjunto)" matTooltip="Descargar">
             <mat-icon>download</mat-icon>
           </button>
@@ -56,7 +51,6 @@
           </button>
         </div>
       </div>
-    }
   </div>
 </mat-dialog-content>
 

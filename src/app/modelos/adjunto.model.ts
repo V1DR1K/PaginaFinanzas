@@ -1,4 +1,5 @@
 export interface Adjunto {
+base64: any;
   id: number;
   movimientoId: number;
   nombreArchivo: string;

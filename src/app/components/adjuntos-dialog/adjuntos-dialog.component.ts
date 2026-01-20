@@ -24,6 +24,9 @@ import { Adjunto } from '../../modelos/adjunto.model';
   styleUrls: ['./adjuntos-dialog.component.scss']
 })
 export class AdjuntosDialogComponent {
+    trackAdjunto(index: number, adjunto: Adjunto): number {
+      return adjunto.id;
+    }
   adjuntos: Adjunto[] = [];
   cargando = false;
   subiendo = false;
