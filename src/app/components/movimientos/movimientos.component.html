@@ -1,9 +1,5 @@
 <app-layout>
   <div class="movimientos-container">
-    @if (cargando) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }
-    
     <!-- Título -->
     <div class="header">
       <h1>Movimientos</h1>
@@ -13,6 +9,9 @@
       </button>
     </div>
 
+    @if (cargando()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
     <!-- Filtros -->
     <mat-card class="filtro-card">
       <mat-card-content>
@@ -101,13 +100,13 @@
             <mat-label>Categoría</mat-label>
             <mat-select formControlName="categoriaId">
               @if (nuevoMovimientoForm.get('tipo')?.value === 'ingreso') {
-                @for (categoria of categoriasIngresos; track categoria.id) {
-                  <mat-option [value]="categoria.id">{{ categoria.nombre }}</mat-option>
-                }
+              @for (categoria of categoriasIngresos; track categoria.id) {
+              <mat-option [value]="categoria.id">{{ categoria.nombre }}</mat-option>
+              }
               } @else {
-                @for (categoria of categoriasEgresos; track categoria.id) {
-                  <mat-option [value]="categoria.id">{{ categoria.nombre }}</mat-option>
-                }
+              @for (categoria of categoriasEgresos; track categoria.id) {
+              <mat-option [value]="categoria.id">{{ categoria.nombre }}</mat-option>
+              }
               }
             </mat-select>
           </mat-form-field>
@@ -140,7 +139,7 @@
         <button mat-button (click)="cancelarMovimiento()">
           Cancelar
         </button>
-        <button mat-raised-button  (click)="guardarMovimiento()"
+        <button mat-raised-button (click)="guardarMovimiento()"
           [disabled]="nuevoMovimientoForm.invalid || cargandoMovimiento">
           <mat-icon *ngIf="!cargandoMovimiento">{{ editandoMovimiento ? 'update' : 'save' }}</mat-icon>
           <span *ngIf="!cargandoMovimiento">{{ editandoMovimiento ? 'Actualizar' : 'Guardar' }}</span>

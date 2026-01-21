@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
   selector: 'app-cambio-contrasena',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatProgressBar],
   templateUrl: './cambio-contrasena.component.html',
   styleUrl: './cambio-contrasena.component.scss'
 })

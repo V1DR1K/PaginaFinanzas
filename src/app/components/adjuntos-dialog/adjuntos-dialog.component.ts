@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +28,7 @@ export class AdjuntosDialogComponent {
       return adjunto.id;
     }
   adjuntos: Adjunto[] = [];
-  cargando = false;
+  cargando = signal(false);
   subiendo = false;
   movimientoId: number;
 
@@ -43,16 +43,16 @@ export class AdjuntosDialogComponent {
   }
 
   cargarAdjuntos(): void {
-    this.cargando = true;
+    this.cargando.set(true);
     this.adjuntoService.getAdjuntos(this.movimientoId).subscribe({
       next: (data) => {
         this.adjuntos = data ?? [];
-        this.cargando = false;
+        this.cargando.set(false);
       },
       error: (error) => {
         console.error('Error al cargar adjuntos:', error);
         this.toastr.error('Error al cargar los adjuntos', 'Error');
-        this.cargando = false;
+        this.cargando.set(false);
       }
     });
   }

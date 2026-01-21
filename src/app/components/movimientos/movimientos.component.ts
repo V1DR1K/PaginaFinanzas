@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -66,7 +66,7 @@ export class MovimientosComponent implements OnInit {
   cargandoMovimiento: boolean = false;
   editandoMovimiento: boolean = false;
   movimientoEnEdicion: Movimiento | null = null;
-  cargando: boolean = false;
+  cargando = signal(false);
   
   // Estadísticas
   totalIngresos: number = 0;
@@ -124,17 +124,17 @@ export class MovimientosComponent implements OnInit {
   }
 
   cargarMovimientos(): void {
-    this.cargando = true;
+    this.cargando.set(true);
     this.movimientoService.findAllMovimientos().subscribe({
       next: (data) => {
         this.movimientos = data;
         this.calcularEstadisticas();
-        this.cargando = false;
+        this.cargando.set(false);
       },
       error: (error) => {
         console.error('Error al cargar movimientos:', error);
         this.toastr.error('Error al cargar los movimientos', 'Error');
-        this.cargando = false;
+        this.cargando.set(false);
       },
     });
   }

@@ -93,7 +93,7 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
   private binanceStatusSub?: Subscription;
   private negativeScrollInterval?: any;
   private positiveScrollInterval?: any;
-  cargando: boolean = true;
+  cargando = signal(true);
 
   displayedColumns = ['pair', 'last', 'changePct', 'bidAsk', 'range', 'time'];
 
@@ -126,7 +126,7 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   cargarDatos(): void {
-    this.cargando = true;
+    this.cargando.set(true);
 
     // Cargar símbolos
     this.cryptoService.getSymbolos().subscribe({
@@ -137,7 +137,7 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
       error: (error) => {
         console.error('Error al cargar símbolos:', error);
         this.toastr.error('Error al cargar los símbolos', 'Error');
-        this.cargando = false;
+        this.cargando.set(false);
       }
     });
 
@@ -169,7 +169,7 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
     if (bitgetSubs.length) {
       this.tickerSub = this.wsService.subscribeTickers(bitgetSubs).subscribe((update) => {
         this.applyBitgetUpdate(update);
-        this.cargando = false;
+        this.cargando.set(false);
       });
       this.statusSub = this.wsService.connectionStatus$.subscribe((status) => {
         this.connectionStatus = status;
@@ -184,7 +184,7 @@ export class InversionesComponent implements OnInit, OnDestroy, AfterViewInit {
     if (binancePairs.length) {
       this.binanceTickerSub = this.binanceWs.subscribeTickers(binancePairs).subscribe((update) => {
         this.applyBinanceUpdate(update);
-        this.cargando = false;
+        this.cargando.set(false);
       });
       this.binanceStatusSub = this.binanceWs.connectionStatus$.subscribe((status) => {
         this.binanceStatus = status;

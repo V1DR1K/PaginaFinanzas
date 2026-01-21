@@ -1,27 +1,62 @@
 <app-layout>
-  <div class="home-container">
-    <div class="tipos-evento-panel" [ngClass]="theme">
-      <h2>Tipos de Evento</h2>
-      <form [formGroup]="tipoForm" (ngSubmit)="guardar()" class="tipo-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
-          <input matInput formControlName="nombre" required />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Descripción</mat-label>
-          <input matInput formControlName="descripcion" />
-        </mat-form-field>
-        <button mat-raised-button color="primary" type="submit">Agregar</button>
-        <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+  <div class="tipos-evento-container">
+    <div *ngIf="cargando()" class="cargando-bar">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="header">
+      <h1>Tipos de Evento</h1>
+      <button mat-raised-button (click)="nuevoTipo()">
+        <mat-icon>add</mat-icon>
+        Nuevo Tipo
+      </button>
+    </div>
+    
+    <div *ngIf="mostrandoFormulario" class="formulario-card">
+      <h2>{{ editandoTipo ? 'Editar' : 'Nuevo' }} Tipo de Evento</h2>
+      <form [formGroup]="tipoForm" (ngSubmit)="guardar()">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej: Cumpleaños" required />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <input matInput formControlName="descripcion" placeholder="Opcional" />
+          </mat-form-field>
+        </div>
+        <div class="color-picker">
+          <label>Color:</label>
+          <div class="colores">
+            <div *ngFor="let color of colores" 
+                 class="color-item" 
+                 [style.background]="color"
+                 [class.selected]="tipoForm.get('color')?.value === color"
+                 (click)="tipoForm.patchValue({ color: color })">
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit">{{ editandoTipo ? 'Actualizar' : 'Agregar' }}</button>
+        </div>
       </form>
-      <div class="tipos-lista">
-        <mat-card *ngFor="let tipo of tipos" [ngClass]="theme" class="tipo-item">
-          <mat-card-content>
-            <span class="tipo-nombre">{{ tipo.nombre }}</span>
-            <span class="tipo-desc">{{ tipo.descripcion }}</span>
-          </mat-card-content>
-        </mat-card>
-      </div>
+    </div>
+    <div class="tipos-lista">
+      <mat-card *ngFor="let tipo of tipos" [ngClass]="theme" class="tipo-item">
+        <mat-card-content>
+          <div class="tipo-color-badge" [style.background]="tipo.color"></div>
+          <span class="tipo-nombre">{{ tipo.nombre }}</span>
+          <span class="tipo-desc">{{ tipo.descripcion }}</span>
+        </mat-card-content>
+        <div class="tipo-actions">
+          <button mat-icon-button color="primary" (click)="editarTipo(tipo)" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarTipo(tipo)" matTooltip="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </mat-card>
     </div>
   </div>
 </app-layout>

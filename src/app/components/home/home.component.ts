@@ -99,10 +99,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   getTipoColor(tipoId?: string): string {
     const tipo = this.tipos.find(t => t.id === tipoId);
     if (!tipo) return '#bdbdbd';
-    const colors = ['#60a5fa','#34d399','#fbbf24','#f87171','#a78bfa','#f472b6','#fb7185','#facc15','#38bdf8','#818cf8'];
-    let hash = 0;
-    for (let i = 0; i < tipo.nombre.length; i++) hash = tipo.nombre.charCodeAt(i) + ((hash << 5) - hash);
-    return colors[Math.abs(hash) % colors.length];
+    return tipo.color || '#bdbdbd';
   }
 
   cargarDashboard(): void {

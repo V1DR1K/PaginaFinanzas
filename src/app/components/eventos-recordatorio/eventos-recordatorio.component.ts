@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { TipoEventoService } from '../../services/tipo-evento.service';
 import { LayoutComponent } from '../layout/layout.component';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 import { MatIcon } from "@angular/material/icon";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
   selector: 'app-eventos-recordatorio',
@@ -31,8 +32,9 @@ import { MatIcon } from "@angular/material/icon";
     MatCardHeader,
     MatCardTitle,
     MatIcon,
-    MatButtonModule
-  ],
+    MatButtonModule,
+    MatProgressBar
+],
   providers: [DatePipe],
   templateUrl: './eventos-recordatorio.component.html',
   styleUrls: ['./eventos-recordatorio.component.scss']
@@ -43,7 +45,7 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
   tipos: TipoEvento[] = [];
   theme: 'light' | 'dark' = 'light';
   eventoSeleccionado: Evento | null = null;
-  cargando: boolean = false;
+  cargando = signal(false);
   filtroTipoId: string = '';
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -70,15 +72,15 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
   }
 
   cargarEventos() {
-    this.cargando = true;
+    this.cargando.set(true);
     this.eventoService.getEventos().subscribe({
       next: (eventos) => {
         this.eventos = eventos
           .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
         this.filtrarEventos();
-        this.cargando = false;
+        this.cargando.set(false);
       },
-      error: () => { this.cargando = false; }
+      error: () => { this.cargando.set(false); }
     });
   }
 
@@ -105,15 +107,15 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
 
   guardarEvento() {
     if (!this.eventoSeleccionado || !this.eventoSeleccionado.descripcion || !this.eventoSeleccionado.fecha || !this.eventoSeleccionado.tipoId) return;
-    this.cargando = true;
+    this.cargando.set(true);
     this.eventoService.crearEvento(this.eventoSeleccionado).subscribe({
       next: (evento) => {
         this.eventos.push(evento);
         this.filtrarEventos();
         this.eventoSeleccionado = null;
-        this.cargando = false;
+        this.cargando.set(false);
       },
-      error: () => { this.cargando = false; }
+      error: () => { this.cargando.set(false); }
     });
   }
 
@@ -130,12 +132,8 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
   }
 
   getTipoColor(tipoId?: string): string {
-    // Asignar color por hash del nombre para consistencia
     const tipo = this.tipos.find(t => t.id === tipoId);
     if (!tipo) return '#bdbdbd';
-    const colors = ['#60a5fa','#34d399','#fbbf24','#f87171','#a78bfa','#f472b6','#fb7185','#facc15','#38bdf8','#818cf8'];
-    let hash = 0;
-    for (let i = 0; i < tipo.nombre.length; i++) hash = tipo.nombre.charCodeAt(i) + ((hash << 5) - hash);
-    return colors[Math.abs(hash) % colors.length];
+    return tipo.color || '#bdbdbd';
   }
 }

@@ -1,5 +1,8 @@
 <app-layout>
   <div class="home-container">
+    @if (cargando()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
     <div class="eventos-panel" [class.dark]="theme === 'dark'" [class.light]="theme === 'light'">
       <div class="header">
         <h1>Eventos y Recordatorios</h1>

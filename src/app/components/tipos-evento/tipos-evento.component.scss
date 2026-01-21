@@ -1,3 +1,112 @@
+.tipo-color-badge {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 12px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 4px rgba(0,0,0,0.15);
+  vertical-align: middle;
+}
+
+.tipo-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+// Selector de color para tipo de evento
+@import '../../../assets/estilos/index';
+
+.tipos-evento-container {
+  @include main-container;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-2xl;
+  padding: 0 $spacing-md;
+
+  h1 {
+    @include main-title;
+    margin: 0;
+  }
+}
+
+.formulario-card {
+  @include glass-card;
+  padding: $spacing-2xl;
+  margin-bottom: $spacing-2xl;
+  margin: 0 $spacing-md $spacing-2xl;
+
+  h2 {
+    @include section-title;
+    margin-bottom: $spacing-xl;
+  }
+
+  form {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+
+      mat-form-field {
+        width: 100%;
+      }
+    }
+
+    .color-picker {
+      margin: 1.5rem 0;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        @include text-secondary;
+        font-size: 0.9rem;
+      }
+
+      .colores {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        .color-item {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: 3px solid transparent;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+
+          &.selected {
+            :host-context(html.dark-theme) & {
+              border-color: $dark-text-primary;
+              box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            :host-context(:not(.dark-theme)) & {
+              border-color: $light-text-primary;
+              box-shadow: 0 0 10px rgba(15, 23, 42, 0.5);
+            }
+          }
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+  }
+}
 @import '../../../assets/estilos/index';
 
 
