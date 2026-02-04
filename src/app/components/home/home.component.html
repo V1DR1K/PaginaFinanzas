@@ -1,8 +1,6 @@
 <app-layout>
   <div class="home-container">
-    @if (cargando()) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }
+
     <div class="header">
       <div>
         <h1>Dashboard</h1>
@@ -12,7 +10,7 @@
         <button mat-icon-button (click)="mostrarValores.set(!mostrarValores())" matTooltip="Mostrar/Ocultar valores">
           <mat-icon>{{ mostrarValores() ? 'visibility' : 'visibility_off' }}</mat-icon>
         </button>
-        <button mat-raised-button (click)="cargarDashboard()">
+        <button mat-raised-button (click)="testEnviarEvetnos()">
           <mat-icon>refresh</mat-icon>
           Actualizar
         </button>

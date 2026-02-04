@@ -34,12 +34,13 @@ import { MatProgressBar } from "@angular/material/progress-bar";
     MatIcon,
     MatButtonModule,
     MatProgressBar
-],
+  ],
   providers: [DatePipe],
   templateUrl: './eventos-recordatorio.component.html',
   styleUrls: ['./eventos-recordatorio.component.scss']
 })
 export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
+  filtroFecha: 'todos' | 'pasados' | 'futuros' = 'todos';
   eventos: Evento[] = [];
   eventosFiltrados: Evento[] = [];
   tipos: TipoEvento[] = [];
@@ -47,6 +48,7 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
   eventoSeleccionado: Evento | null = null;
   cargando = signal(false);
   filtroTipoId: string = '';
+  today: Date = new Date(new Date().setHours(0, 0, 0, 0));
 
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -75,8 +77,7 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
     this.cargando.set(true);
     this.eventoService.getEventos().subscribe({
       next: (eventos) => {
-        this.eventos = eventos
-          .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+        this.eventos = eventos.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
         this.filtrarEventos();
         this.cargando.set(false);
       },
@@ -84,19 +85,27 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Métodos de eventos futuros/pasados eliminados. Toda la lógica ahora usa eventos/eventosFiltrados.
+
   cargarTipos() {
     this.tipoEventoService.getTipos().subscribe(tipos => this.tipos = tipos);
   }
 
   filtrarEventos() {
-    if (!this.filtroTipoId) {
-      this.eventosFiltrados = [...this.eventos];
-    } else {
-      this.eventosFiltrados = this.eventos.filter(e => e.tipoId === this.filtroTipoId);
+    let filtrados = !this.filtroTipoId
+      ? [...this.eventos]
+      : this.eventos.filter((e: Evento) => e.tipoId === this.filtroTipoId);
+
+    if (this.filtroFecha === 'pasados') {
+      filtrados = filtrados
+        .filter(e => new Date(e.fecha).setHours(0,0,0,0) < this.today.getTime())
+        .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()); // Ascendente
+    } else if (this.filtroFecha === 'futuros') {
+      filtrados = filtrados
+        .filter(e => new Date(e.fecha).setHours(0,0,0,0) >= this.today.getTime())
+        .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()); // Ascendente
     }
-    if (this.sort && (this.eventosFiltrados as any).sortData) {
-      (this.eventosFiltrados as any).sort = this.sort;
-    }
+    this.eventosFiltrados = filtrados;
   }
 
   ngAfterViewInit() {
@@ -104,6 +113,17 @@ export class EventosRecordatorioComponent implements OnInit, AfterViewInit {
       (this.eventosFiltrados as any).sort = this.sort;
     }
   }
+
+  isPast(fecha: string | Date): boolean {
+    const eventDate = new Date(fecha);
+    eventDate.setHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return eventDate.getTime() < today.getTime();
+  }
+
 
   guardarEvento() {
     if (!this.eventoSeleccionado || !this.eventoSeleccionado.descripcion || !this.eventoSeleccionado.fecha || !this.eventoSeleccionado.tipoId) return;

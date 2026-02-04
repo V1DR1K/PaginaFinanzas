@@ -1,7 +1,7 @@
 <app-layout>
   <div class="home-container">
     @if (cargando()) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
     <div class="eventos-panel" [class.dark]="theme === 'dark'" [class.light]="theme === 'light'">
       <div class="header">
@@ -40,7 +40,8 @@
             </mat-form-field>
             <div class="form-actions">
               <button mat-stroked-button color="warn" type="button" (click)="cancelarEdicion()">Cancelar</button>
-              <button mat-raised-button color="primary" type="submit">{{ eventoSeleccionado.id ? 'Actualizar' : 'Agregar' }}</button>
+              <button mat-raised-button color="primary" type="submit">{{ eventoSeleccionado.id ? 'Actualizar' :
+                'Agregar' }}</button>
             </div>
           </form>
         </mat-card-content>
@@ -49,24 +50,47 @@
       <!-- Filtros -->
       <mat-card class="filtro-card">
         <mat-card-content>
-          <mat-form-field appearance="fill">
-            <mat-label>Tipo de Evento</mat-label>
-            <mat-select [(ngModel)]="filtroTipoId" name="filtroTipoId" (selectionChange)="filtrarEventos()">
-              <mat-option value="">Todos</mat-option>
-              <mat-option *ngFor="let tipo of tipos" [value]="tipo.id">{{ tipo.nombre }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class="filtros-row">
+            <mat-form-field appearance="fill">
+              <mat-label>Tipo de Evento</mat-label>
+              <mat-select [(ngModel)]="filtroTipoId" name="filtroTipoId" (selectionChange)="filtrarEventos()">
+                <mat-option value="">Todos</mat-option>
+                <mat-option *ngFor="let tipo of tipos" [value]="tipo.id">{{ tipo.nombre }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="mat-select-pasados">
+              <mat-label>Mostrar</mat-label>
+              <mat-select [(ngModel)]="filtroFecha" name="filtroFecha" (selectionChange)="filtrarEventos()">
+                <mat-option value="todos">Todos</mat-option>
+                <mat-option value="pasados">Pasados</mat-option>
+                <mat-option value="futuros">Futuros</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </mat-card-content>
       </mat-card>
 
       <!-- Tabla de eventos -->
-      <mat-card class="tabla-card">
+      <!-- Eventos Futuros -->
+      <mat-card class="tabla-card" [class.dark]="theme === 'dark'" [class.light]="theme === 'light'">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>event</mat-icon>
+            Todos los Eventos
+          </mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <table mat-table [dataSource]="eventosFiltrados" class="eventos-table" matSort>
             <!-- Fecha -->
             <ng-container matColumnDef="fecha">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-              <td mat-cell *matCellDef="let evento">{{ evento.fecha | date:'dd/MM/yyyy' }}</td>
+              <td mat-cell *matCellDef="let evento">
+                <span
+                  [ngClass]=" (isPast(evento.fecha) ? 'evento-pasado' : 'evento-futuro')">
+                  {{ evento.fecha | date:'dd/MM/yyyy' }}
+                </span>
+
+              </td>
             </ng-container>
             <!-- Descripción -->
             <ng-container matColumnDef="descripcion">
@@ -86,7 +110,8 @@
             <ng-container matColumnDef="acciones">
               <th mat-header-cell *matHeaderCellDef>Acciones</th>
               <td mat-cell *matCellDef="let evento">
-                <button mat-stroked-button color="primary" class="editar-btn" (click)="editarEvento(evento)" title="Editar">
+                <button mat-stroked-button color="primary" class="editar-btn" (click)="editarEvento(evento)"
+                  title="Editar">
                   <mat-icon>edit</mat-icon> Editar
                 </button>
               </td>

@@ -34,23 +34,23 @@ import { TipoEventoService } from '../../services/tipo-evento.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('eventosCarousel') eventosCarousel?: ElementRef<HTMLDivElement>;
-    private eventosScrollInterval?: any;
+  @ViewChild('eventosCarousel') eventosCarousel?: ElementRef<HTMLDivElement>;
+  private eventosScrollInterval?: any;
   cargando = signal(false);
-  
+
   // Estadísticas generales
   totalMovimientos = signal(0);
   totalIngresos = signal(0);
   totalEgresos = signal(0);
   balance = signal(0);
-  
+
   // Datos para las cards
   totalCategorias = signal(0);
   totalRecurrentes = signal(0);
   recurrentesActivos = signal(0);
   totalInsights = signal(0);
   insightsNoLeidos = signal(0);
-  
+
   // Últimos movimientos
   ultimosMovimientos = signal<Movimiento[]>([]);
   dolares = signal<DolarTipo[]>([]);
@@ -70,7 +70,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private dolarService: DolarService,
     private eventoService: EventoService,
     private tipoEventoService: TipoEventoService
-  ) {}
+  ) { }
 
 
   // ngOnInit duplicado eliminado, ya está definido correctamente arriba
@@ -102,34 +102,38 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return tipo.color || '#bdbdbd';
   }
 
+  testEnviarEvetnos(): void {
+    this.eventoService.testMail();
+  }
+
   cargarDashboard(): void {
     this.cargando.set(true);
-    
+    this.testEnviarEvetnos();
     // Cargar movimientos
     this.movimientoService.findAllMovimientos().subscribe({
       next: (movimientos) => {
         this.totalMovimientos.set(movimientos.length);
-        
+
         const ingresos = movimientos.filter(m => m.tipo === 'ingreso').reduce((sum, m) => sum + m.cantidad, 0);
         const egresos = movimientos.filter(m => m.tipo === 'egreso').reduce((sum, m) => sum + m.cantidad, 0);
-        
+
         this.totalIngresos.set(ingresos);
         this.totalEgresos.set(egresos);
         this.balance.set(ingresos - egresos);
-        
+
         // Últimos 5 movimientos
         this.ultimosMovimientos.set(movimientos.slice(-5).reverse());
-        
+
         this.cargando.set(false);
       },
       error: () => this.cargando.set(false)
     });
-    
+
     // Cargar categorías
     this.categoriaService.getCategorias().subscribe({
       next: (categorias) => this.totalCategorias.set(categorias.length)
     });
-    
+
     // Cargar recurrentes
     this.recurrenteService.getMovimientosRecurrentes().subscribe({
       next: (recurrentes) => {
@@ -137,7 +141,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.recurrentesActivos.set(recurrentes.filter(r => r.activo).length);
       }
     });
-    
+
     // Cargar insights
     this.insightService.getInsights().subscribe({
       next: (response) => {

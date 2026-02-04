@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class EventoService {
   private apiUrl = `${environment.apiUrl}/eventos`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getEventos(): Observable<Evento[]> {
     return this.http.get<Evento[]>(`${this.apiUrl}/getEventos`);
@@ -17,4 +17,18 @@ export class EventoService {
   crearEvento(evento: Evento): Observable<Evento> {
     return this.http.post<Evento>(`${this.apiUrl}/addEventos`, evento);
   }
+
+  testMail() {
+    console.log(`${this.apiUrl}/test`);
+     this.http.get<any>(`${this.apiUrl}/test`);
+  }
+
+    obtenerEventosFuturos(): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/futuros`);
+  }
+
+  obtenerEventosPasados(): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/pasados`);
+  }
+
 }
